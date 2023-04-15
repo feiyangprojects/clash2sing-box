@@ -61,7 +61,7 @@ export function convert(
 
   singbox.outbounds.push(SingboxOutboundsSelector.parse(singboxSelector));
 
-  return JSON.stringify(singbox);
+  return JSON.stringify(singbox, null, 4);
 }
 
 function convertHttp(proxy: ClashProxiesHttp): SingboxOutboundsHttp {
