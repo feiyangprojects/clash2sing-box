@@ -1,0 +1,18 @@
+{
+  "inbounds": [
+    {
+      "type": "mixed",
+      "tag": "mixed",
+
+      "listen": "::",
+      "listen_port": 1080,
+      "users": [
+        {
+          "username": "username",
+          "password": "password"
+        }
+      ],
+      "set_system_proxy": false
+    }
+  ]
+}

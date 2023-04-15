@@ -1,5 +1,6 @@
 {
     "imports": {
+        "deepmerge-ts": "https://deno.land/x/deepmergets@v5.1.0/dist/deno/index.ts",
         "flags": "https://deno.land/std@0.182.0/flags/mod.ts",
         "yaml": "https://deno.land/std@0.182.0/encoding/yaml.ts",
         "zod": "https://deno.land/x/zod@v3.21.4/mod.ts"
