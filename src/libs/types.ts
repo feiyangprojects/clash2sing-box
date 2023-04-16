@@ -28,6 +28,10 @@ export const ClashProxiesShadowsocks = z.object({
   server: z.string(),
   port: z.number(),
   cipher: z.enum([
+    // Temporary workaround
+    "2022-blake3-aes-128-gcm",
+    "2022-blake3-aes-256-gcm",
+    "2022-blake3-chacha20-poly1305",
     "aes-128-gcm",
     "aes-192-gcm",
     "aes-256-gcm",
