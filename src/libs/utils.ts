@@ -3,12 +3,14 @@ import * as yaml from "yaml";
 import {
   Clash,
   ClashProxiesHttp,
+  ClashProxiesHysteria,
   ClashProxiesShadowsocks,
   ClashProxiesSocks5,
   ClashProxiesTrojan,
   ClashProxiesVmess,
   Singbox,
   SingboxOutboundsHttp,
+  SingboxOutboundsHysteria,
   SingboxOutboundsSelector,
   SingboxOutboundsShadowsocks,
   SingboxOutboundsSocks,
@@ -35,6 +37,11 @@ export function convert(
       case "http":
         singbox.outbounds.push(
           SingboxOutboundsHttp.parse(convertHttp(proxy)),
+        );
+        break;
+      case "hysteria":
+        singbox.outbounds.push(
+          SingboxOutboundsHysteria.parse(convertHysteria(proxy)),
         );
         break;
       case "ss":
@@ -95,6 +102,46 @@ function convertHttp(proxy: ClashProxiesHttp): SingboxOutboundsHttp {
     if (proxy.sni !== undefined) {
       outbound.tls.server_name = proxy.sni!;
     }
+  }
+
+  return outbound;
+}
+
+function convertHysteria(
+  proxy: ClashProxiesHysteria,
+): SingboxOutboundsHysteria {
+  const outbound: SingboxOutboundsHysteria = {
+    type: "hysteria",
+    tag: proxy.name,
+    server: proxy.server,
+    server_port: proxy.port,
+    up: proxy.up,
+    down: proxy.down,
+    tls: { "enabled": true },
+  };
+
+  if (proxy.protocol !== undefined && proxy.protocol !== "udp") {
+    throw new Error("Unsupported protocol faketcp or wechat-video");
+  }
+  if (proxy.sni !== undefined) {
+    outbound.tls.server_name = proxy.sni!;
+  } else {
+    outbound.tls.server_name = proxy.server
+  }
+  if (proxy.alpn !== undefined) {
+    outbound.tls.alpn = proxy.alpn!;
+  }
+  if (
+    proxy["skip-cert-verify"] !== undefined &&
+    proxy["skip-cert-verify"] === true
+  ) {
+    outbound.tls.insecure = true;
+  }
+  if (proxy.obfs !== undefined) {
+    outbound.obfs = proxy.obfs!;
+  }
+  if (proxy["auth-str"] !== undefined) {
+    outbound.auth_str = proxy["auth-str"]!;
   }
 
   return outbound;
