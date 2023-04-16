@@ -31,7 +31,7 @@ if (
       ),
     );
   } else {
-    output = encoder.encode(convert(Deno.readTextFileSync(args.input)));
+    output = encoder.encode(convert(Deno.readTextFileSync(args.input), "{}"));
   }
   Deno.writeFileSync(args.output, output);
 } else {

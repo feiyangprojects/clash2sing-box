@@ -20,7 +20,7 @@ import {
 
 export function convert(
   input: string,
-  mergeable?: string,
+  mergeable: string,
 ): string {
   const clash: Clash = Clash.parse(yaml.parse(input));
 
@@ -29,7 +29,7 @@ export function convert(
   });
   const singboxSelector: SingboxOutboundsSelector = {
     type: "selector",
-    "tag": "selector",
+    tag: "selector",
     outbounds: [],
   };
   for (const proxy of clash.proxies) {
@@ -70,11 +70,7 @@ export function convert(
 
   singbox.outbounds.push(SingboxOutboundsSelector.parse(singboxSelector));
 
-  if (mergeable !== undefined) {
-    return JSON.stringify(deepmerge(singbox, JSON.parse(mergeable)), null, 4);
-  } else {
-    return JSON.stringify(singbox, null, 4);
-  }
+  return JSON.stringify(deepmerge(singbox, JSON.parse(mergeable)), null, 4);
 }
 
 function convertHttp(proxy: ClashProxiesHttp): SingboxOutboundsHttp {
@@ -126,7 +122,7 @@ function convertHysteria(
   if (proxy.sni !== undefined) {
     outbound.tls.server_name = proxy.sni!;
   } else {
-    outbound.tls.server_name = proxy.server
+    outbound.tls.server_name = proxy.server;
   }
   if (proxy.alpn !== undefined) {
     outbound.tls.alpn = proxy.alpn!;
