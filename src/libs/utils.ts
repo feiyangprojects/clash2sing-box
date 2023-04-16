@@ -92,7 +92,7 @@ function convertHttp(proxy: ClashProxiesHttp): SingboxOutboundsHttp {
     }
   }
   if (proxy.tls !== undefined && proxy.tls === true) {
-    outbound.tls = { "enabled": true };
+    outbound.tls = { enabled: true };
     if (
       proxy["skip-cert-verify"] !== undefined &&
       proxy["skip-cert-verify"] === true
@@ -117,7 +117,7 @@ function convertHysteria(
     server_port: proxy.port,
     up: proxy.up,
     down: proxy.down,
-    tls: { "enabled": true },
+    tls: { enabled: true },
   };
 
   if (proxy.protocol !== undefined && proxy.protocol !== "udp") {
@@ -224,7 +224,7 @@ function convertTrojan(proxy: ClashProxiesTrojan): SingboxOutboundsTrojan {
     server: proxy.server,
     server_port: proxy.port,
     password: proxy.password,
-    tls: { "enabled": true },
+    tls: { enabled: true },
   };
 
   if (proxy.udp !== undefined && proxy.udp! === false) {
@@ -307,7 +307,7 @@ function convertVmess(proxy: ClashProxiesVmess): SingboxOutboundsVmess {
     outbound.network = "tcp";
   }
   if (proxy.tls !== undefined && proxy.tls === true) {
-    outbound.tls = { "enabled": true };
+    outbound.tls = { enabled: true };
     if (proxy.servername !== undefined) {
       outbound.tls.server_name = proxy.servername!;
     }

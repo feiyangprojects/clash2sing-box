@@ -162,7 +162,7 @@ export const SingboxOutboundsHysteria = z.object({
   obfs: z.optional(z.string()),
   auth_str: z.optional(z.string()),
   network: z.optional(z.enum(["tcp", "udp", "tcp,udp"])),
-  tls: z.optional(SingboxOutboundsCommonTls),
+  tls: SingboxOutboundsCommonTls,
 });
 export const SingboxOutboundsSelector = z.object({
   type: z.literal("selector"),
@@ -216,7 +216,7 @@ export const SingboxOutboundsTrojan = z.object({
   server_port: z.number(),
   password: z.string(),
   network: z.optional(z.enum(["tcp", "udp", "tcp,udp"])),
-  tls: z.optional(SingboxOutboundsCommonTls),
+  tls: SingboxOutboundsCommonTls,
 });
 export const SingboxOutboundsVmess = z.object({
   type: z.literal("vmess"),
