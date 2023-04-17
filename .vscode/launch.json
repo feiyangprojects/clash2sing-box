@@ -1,0 +1,31 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "request": "launch",
+      "name": "Launch Program",
+      "type": "node",
+      "program": "${workspaceFolder}/src/index.ts",
+      "args": [
+        "--input",
+        "./src/tests/clash.yaml",
+        "--output",
+        "./src/tests/sing-box.json",
+        "--merge-with",
+        "./src/tests/sing-box-mergeable.json"
+      ],
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "deno",
+      "runtimeArgs": [
+        "run",
+        "--inspect-wait",
+        "--allow-read=./src/tests/clash.yaml,./src/tests/sing-box-mergeable.json",
+        "--allow-write=./src/tests/sing-box.json"
+      ],
+      "attachSimplePort": 9229
+    }
+  ]
+}
