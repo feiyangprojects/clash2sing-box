@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const ClashProxiesHttp = z.object({
+export const ClashProxyHttp = z.object({
   name: z.string(),
   type: z.literal("http"),
   server: z.string(),
@@ -11,7 +11,7 @@ export const ClashProxiesHttp = z.object({
   "skip-cert-verify": z.optional(z.boolean()),
   sni: z.optional(z.string()),
 });
-export const ClashProxiesHysteria = z.object({
+export const ClashProxyHysteria = z.object({
   name: z.string(),
   type: z.literal("hysteria"),
   server: z.string(),
@@ -26,7 +26,7 @@ export const ClashProxiesHysteria = z.object({
   tls: z.optional(z.boolean()),
   "skip-cert-verify": z.optional(z.boolean()),
 });
-export const ClashProxiesSocks5 = z.object({
+export const ClashProxySocks5 = z.object({
   name: z.string(),
   type: z.literal("socks5"),
   server: z.string(),
@@ -37,7 +37,7 @@ export const ClashProxiesSocks5 = z.object({
   "skip-cert-verify": z.optional(z.boolean()),
   udp: z.optional(z.boolean()),
 });
-export const ClashProxiesShadowsocks = z.object({
+export const ClashProxyShadowsocks = z.object({
   name: z.string(),
   type: z.literal("ss"),
   server: z.string(),
@@ -73,7 +73,7 @@ export const ClashProxiesShadowsocks = z.object({
     mux: z.optional(z.boolean()),
   })),
 });
-export const ClashProxiesTrojan = z.object({
+export const ClashProxyTrojan = z.object({
   name: z.string(),
   type: z.literal("trojan"),
   server: z.string(),
@@ -84,7 +84,7 @@ export const ClashProxiesTrojan = z.object({
   alpn: z.optional(z.array(z.string())),
   "skip-cert-verify": z.optional(z.boolean()),
 });
-export const ClashProxiesVmess = z.object({
+export const ClashProxyVmess = z.object({
   name: z.string(),
   type: z.literal("vmess"),
   server: z.string(),
@@ -119,40 +119,40 @@ export const ClashProxiesVmess = z.object({
 });
 export const Clash = z.object({
   proxies: z.array(z.discriminatedUnion("type", [
-    ClashProxiesHttp,
-    ClashProxiesHysteria,
-    ClashProxiesShadowsocks,
-    ClashProxiesSocks5,
-    ClashProxiesTrojan,
-    ClashProxiesVmess,
+    ClashProxyHttp,
+    ClashProxyHysteria,
+    ClashProxyShadowsocks,
+    ClashProxySocks5,
+    ClashProxyTrojan,
+    ClashProxyVmess,
   ])),
 });
 
-export type ClashProxiesHttp = z.infer<typeof ClashProxiesHttp>;
-export type ClashProxiesHysteria = z.infer<typeof ClashProxiesHysteria>;
-export type ClashProxiesShadowsocks = z.infer<typeof ClashProxiesShadowsocks>;
-export type ClashProxiesSocks5 = z.infer<typeof ClashProxiesSocks5>;
-export type ClashProxiesTrojan = z.infer<typeof ClashProxiesTrojan>;
-export type ClashProxiesVmess = z.infer<typeof ClashProxiesVmess>;
+export type ClashProxyHttp = z.infer<typeof ClashProxyHttp>;
+export type ClashProxyHysteria = z.infer<typeof ClashProxyHysteria>;
+export type ClashProxyShadowsocks = z.infer<typeof ClashProxyShadowsocks>;
+export type ClashProxySocks5 = z.infer<typeof ClashProxySocks5>;
+export type ClashProxyTrojan = z.infer<typeof ClashProxyTrojan>;
+export type ClashProxyVmess = z.infer<typeof ClashProxyVmess>;
 export type Clash = z.infer<typeof Clash>;
 
-export const SingboxOutboundsCommonTls = z.object({
+export const SingboxOutboundCommonTls = z.object({
   enabled: z.boolean(),
   disable_sni: z.optional(z.boolean()),
   server_name: z.optional(z.string()),
   insecure: z.optional(z.boolean()),
   alpn: z.optional(z.array(z.string())),
 });
-export const SingboxOutboundsHttp = z.object({
+export const SingboxOutboundHttp = z.object({
   type: z.literal("http"),
   tag: z.string(),
   server: z.string(),
   server_port: z.number(),
   username: z.optional(z.string()),
   password: z.optional(z.string()),
-  tls: z.optional(SingboxOutboundsCommonTls),
+  tls: z.optional(SingboxOutboundCommonTls),
 });
-export const SingboxOutboundsHysteria = z.object({
+export const SingboxOutboundHysteria = z.object({
   type: z.literal("hysteria"),
   tag: z.string(),
   server: z.string(),
@@ -162,15 +162,15 @@ export const SingboxOutboundsHysteria = z.object({
   obfs: z.optional(z.string()),
   auth_str: z.optional(z.string()),
   network: z.optional(z.enum(["tcp", "udp", "tcp,udp"])),
-  tls: SingboxOutboundsCommonTls,
+  tls: SingboxOutboundCommonTls,
 });
-export const SingboxOutboundsSelector = z.object({
+export const SingboxOutboundSelector = z.object({
   type: z.literal("selector"),
   tag: z.string(),
   outbounds: z.array(z.string()),
   default: z.optional(z.string()),
 });
-export const SingboxOutboundsShadowsocks = z.object({
+export const SingboxOutboundShadowsocks = z.object({
   type: z.literal("shadowsocks"),
   tag: z.string(),
   server: z.string(),
@@ -200,7 +200,7 @@ export const SingboxOutboundsShadowsocks = z.object({
   plugin_opts: z.optional(z.string()),
   network: z.optional(z.enum(["tcp", "udp", "tcp,udp"])),
 });
-export const SingboxOutboundsSocks = z.object({
+export const SingboxOutboundSocks = z.object({
   type: z.literal("socks"),
   tag: z.string(),
   server: z.string(),
@@ -209,16 +209,16 @@ export const SingboxOutboundsSocks = z.object({
   password: z.optional(z.string()),
   network: z.optional(z.enum(["tcp", "udp", "tcp,udp"])),
 });
-export const SingboxOutboundsTrojan = z.object({
+export const SingboxOutboundTrojan = z.object({
   type: z.literal("trojan"),
   tag: z.string(),
   server: z.string(),
   server_port: z.number(),
   password: z.string(),
   network: z.optional(z.enum(["tcp", "udp", "tcp,udp"])),
-  tls: SingboxOutboundsCommonTls,
+  tls: SingboxOutboundCommonTls,
 });
-export const SingboxOutboundsVmess = z.object({
+export const SingboxOutboundVmess = z.object({
   type: z.literal("vmess"),
   tag: z.string(),
   server: z.string(),
@@ -229,7 +229,7 @@ export const SingboxOutboundsVmess = z.object({
   ),
   alter_id: z.optional(z.number()),
   network: z.optional(z.enum(["tcp", "udp", "tcp,udp"])),
-  tls: z.optional(SingboxOutboundsCommonTls),
+  tls: z.optional(SingboxOutboundCommonTls),
   transport: z.optional(z.object({
     type: z.enum(["http", "ws", "grpc"]),
     host: z.optional(z.array(z.string())),
@@ -243,26 +243,26 @@ export const SingboxOutboundsVmess = z.object({
 });
 export const Singbox = z.object({
   outbounds: z.array(z.discriminatedUnion("type", [
-    SingboxOutboundsHttp,
-    SingboxOutboundsHysteria,
-    SingboxOutboundsSelector,
-    SingboxOutboundsShadowsocks,
-    SingboxOutboundsSocks,
-    SingboxOutboundsTrojan,
-    SingboxOutboundsVmess,
+    SingboxOutboundHttp,
+    SingboxOutboundHysteria,
+    SingboxOutboundSelector,
+    SingboxOutboundShadowsocks,
+    SingboxOutboundSocks,
+    SingboxOutboundTrojan,
+    SingboxOutboundVmess,
   ])),
 });
 
-export type SingboxOutboundsCommonTls = z.infer<
-  typeof SingboxOutboundsCommonTls
+export type SingboxOutboundCommonTls = z.infer<
+  typeof SingboxOutboundCommonTls
 >;
-export type SingboxOutboundsHttp = z.infer<typeof SingboxOutboundsHttp>;
-export type SingboxOutboundsHysteria = z.infer<typeof SingboxOutboundsHysteria>;
-export type SingboxOutboundsSelector = z.infer<typeof SingboxOutboundsSelector>;
-export type SingboxOutboundsShadowsocks = z.infer<
-  typeof SingboxOutboundsShadowsocks
+export type SingboxOutboundHttp = z.infer<typeof SingboxOutboundHttp>;
+export type SingboxOutboundHysteria = z.infer<typeof SingboxOutboundHysteria>;
+export type SingboxOutboundSelector = z.infer<typeof SingboxOutboundSelector>;
+export type SingboxOutboundShadowsocks = z.infer<
+  typeof SingboxOutboundShadowsocks
 >;
-export type SingboxOutboundsSocks = z.infer<typeof SingboxOutboundsSocks>;
-export type SingboxOutboundsTrojan = z.infer<typeof SingboxOutboundsTrojan>;
-export type SingboxOutboundsVmess = z.infer<typeof SingboxOutboundsVmess>;
+export type SingboxOutboundSocks = z.infer<typeof SingboxOutboundSocks>;
+export type SingboxOutboundTrojan = z.infer<typeof SingboxOutboundTrojan>;
+export type SingboxOutboundVmess = z.infer<typeof SingboxOutboundVmess>;
 export type Singbox = z.infer<typeof Singbox>;

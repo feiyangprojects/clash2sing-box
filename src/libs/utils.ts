@@ -2,20 +2,20 @@ import { deepmerge } from "deepmerge-ts";
 import * as yaml from "yaml";
 import {
   Clash,
-  ClashProxiesHttp,
-  ClashProxiesHysteria,
-  ClashProxiesShadowsocks,
-  ClashProxiesSocks5,
-  ClashProxiesTrojan,
-  ClashProxiesVmess,
+  ClashProxyHttp,
+  ClashProxyHysteria,
+  ClashProxyShadowsocks,
+  ClashProxySocks5,
+  ClashProxyTrojan,
+  ClashProxyVmess,
   Singbox,
-  SingboxOutboundsHttp,
-  SingboxOutboundsHysteria,
-  SingboxOutboundsSelector,
-  SingboxOutboundsShadowsocks,
-  SingboxOutboundsSocks,
-  SingboxOutboundsTrojan,
-  SingboxOutboundsVmess,
+  SingboxOutboundHttp,
+  SingboxOutboundHysteria,
+  SingboxOutboundSelector,
+  SingboxOutboundShadowsocks,
+  SingboxOutboundSocks,
+  SingboxOutboundTrojan,
+  SingboxOutboundVmess,
 } from "./types.ts";
 
 export function convert(
@@ -27,7 +27,7 @@ export function convert(
   const singbox: Singbox = Singbox.parse({
     outbounds: [],
   });
-  const singboxSelector: SingboxOutboundsSelector = {
+  const singboxSelector: SingboxOutboundSelector = {
     type: "selector",
     tag: "selector",
     outbounds: [],
@@ -36,45 +36,45 @@ export function convert(
     switch (proxy.type) {
       case "http":
         singbox.outbounds.push(
-          SingboxOutboundsHttp.parse(convertHttp(proxy)),
+          SingboxOutboundHttp.parse(convertHttp(proxy)),
         );
         break;
       case "hysteria":
         singbox.outbounds.push(
-          SingboxOutboundsHysteria.parse(convertHysteria(proxy)),
+          SingboxOutboundHysteria.parse(convertHysteria(proxy)),
         );
         break;
       case "ss":
         singbox.outbounds.push(
-          SingboxOutboundsShadowsocks.parse(convertShadowsocks(proxy)),
+          SingboxOutboundShadowsocks.parse(convertShadowsocks(proxy)),
         );
         break;
       case "socks5":
         singbox.outbounds.push(
-          SingboxOutboundsSocks.parse(convertSocks5ToSocks(proxy)),
+          SingboxOutboundSocks.parse(convertSocks5ToSocks(proxy)),
         );
         break;
       case "trojan":
         singbox.outbounds.push(
-          SingboxOutboundsTrojan.parse(convertTrojan(proxy)),
+          SingboxOutboundTrojan.parse(convertTrojan(proxy)),
         );
         break;
       case "vmess":
         singbox.outbounds.push(
-          SingboxOutboundsVmess.parse(convertVmess(proxy)),
+          SingboxOutboundVmess.parse(convertVmess(proxy)),
         );
         break;
     }
     singboxSelector.outbounds.push(proxy.name);
   }
 
-  singbox.outbounds.push(SingboxOutboundsSelector.parse(singboxSelector));
+  singbox.outbounds.push(SingboxOutboundSelector.parse(singboxSelector));
 
   return JSON.stringify(deepmerge(singbox, JSON.parse(mergeable)), null, 4);
 }
 
-function convertHttp(proxy: ClashProxiesHttp): SingboxOutboundsHttp {
-  const outbound: SingboxOutboundsHttp = {
+function convertHttp(proxy: ClashProxyHttp): SingboxOutboundHttp {
+  const outbound: SingboxOutboundHttp = {
     type: "http",
     tag: proxy.name,
     server: proxy.server,
@@ -104,9 +104,9 @@ function convertHttp(proxy: ClashProxiesHttp): SingboxOutboundsHttp {
 }
 
 function convertHysteria(
-  proxy: ClashProxiesHysteria,
-): SingboxOutboundsHysteria {
-  const outbound: SingboxOutboundsHysteria = {
+  proxy: ClashProxyHysteria,
+): SingboxOutboundHysteria {
+  const outbound: SingboxOutboundHysteria = {
     type: "hysteria",
     tag: proxy.name,
     server: proxy.server,
@@ -144,9 +144,9 @@ function convertHysteria(
 }
 
 function convertShadowsocks(
-  proxy: ClashProxiesShadowsocks,
-): SingboxOutboundsShadowsocks {
-  const outbound: SingboxOutboundsShadowsocks = {
+  proxy: ClashProxyShadowsocks,
+): SingboxOutboundShadowsocks {
+  const outbound: SingboxOutboundShadowsocks = {
     type: "shadowsocks",
     tag: proxy.name,
     server: proxy.server,
@@ -188,9 +188,9 @@ function convertShadowsocks(
 }
 
 function convertSocks5ToSocks(
-  proxy: ClashProxiesSocks5,
-): SingboxOutboundsSocks {
-  const outbound: SingboxOutboundsSocks = {
+  proxy: ClashProxySocks5,
+): SingboxOutboundSocks {
+  const outbound: SingboxOutboundSocks = {
     type: "socks",
     tag: proxy.name,
     server: proxy.server,
@@ -213,8 +213,8 @@ function convertSocks5ToSocks(
   return outbound;
 }
 
-function convertTrojan(proxy: ClashProxiesTrojan): SingboxOutboundsTrojan {
-  const outbound: SingboxOutboundsTrojan = {
+function convertTrojan(proxy: ClashProxyTrojan): SingboxOutboundTrojan {
+  const outbound: SingboxOutboundTrojan = {
     type: "trojan",
     tag: proxy.name,
     server: proxy.server,
@@ -242,8 +242,8 @@ function convertTrojan(proxy: ClashProxiesTrojan): SingboxOutboundsTrojan {
   return outbound;
 }
 
-function convertVmess(proxy: ClashProxiesVmess): SingboxOutboundsVmess {
-  const outbound: SingboxOutboundsVmess = {
+function convertVmess(proxy: ClashProxyVmess): SingboxOutboundVmess {
+  const outbound: SingboxOutboundVmess = {
     type: "vmess",
     tag: proxy.name,
     server: proxy.server,
