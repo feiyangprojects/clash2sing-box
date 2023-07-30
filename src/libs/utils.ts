@@ -67,6 +67,9 @@ export function convert(
     }
     singboxSelector.outbounds.push(proxy.name);
   }
+  if (singbox.outbounds.length > 0) {
+    singboxSelector.default = singbox.outbounds.at(-1)!.tag
+  }
 
   singbox.outbounds.push(SingboxOutboundSelector.parse(singboxSelector));
 
