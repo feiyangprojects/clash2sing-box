@@ -74,6 +74,19 @@ export const ClashProxyTrojan = ClashProxy.extend({
   alpn: z.optional(z.array(z.string())),
   "skip-cert-verify": z.optional(z.boolean()),
 });
+export const ClashProxyTUIC = ClashProxy.extend({
+  type: z.literal("tuic"),
+  uuid: z.string(),
+  password: z.optional(z.string()),
+  alpn: z.optional(z.array(z.string())),
+  "heartbeat-interval": z.optional(z.number()),
+  "reduce-rtt": z.optional(z.boolean()),
+  "udp-relay-mode":z.optional(z.enum(["native", "quic"])),
+  "congestion-controller": z.optional(z.enum(["cubic", "new_reno", "bbr"])),
+  "skip-cert-verify": z.optional(z.boolean()),
+  sni: z.optional(z.string()),
+  "udp-over-stream": z.optional(z.boolean()),
+})
 export const ClashProxyVmess = ClashProxy.extend({
   type: z.literal("vmess"),
   uuid: z.string(),
@@ -111,6 +124,7 @@ export const Clash = z.object({
     ClashProxyShadowsocks,
     ClashProxySocks5,
     ClashProxyTrojan,
+    ClashProxyTUIC,
     ClashProxyVmess,
   ])),
 });
@@ -121,6 +135,7 @@ export type ClashProxyHysteria = z.infer<typeof ClashProxyHysteria>;
 export type ClashProxyShadowsocks = z.infer<typeof ClashProxyShadowsocks>;
 export type ClashProxySocks5 = z.infer<typeof ClashProxySocks5>;
 export type ClashProxyTrojan = z.infer<typeof ClashProxyTrojan>;
+export type ClashProxyTUIC = z.infer<typeof ClashProxyTUIC>;
 export type ClashProxyVmess = z.infer<typeof ClashProxyVmess>;
 export type Clash = z.infer<typeof Clash>;
 
@@ -193,6 +208,17 @@ export const SingboxOutboundTrojan = SingboxOutbound.extend({
   password: z.string(),
   tls: SingboxOutboundCommonTls,
 });
+export const SingboxOutboundTUIC = SingboxOutbound.extend({
+  type: z.literal("tuic"),
+  uuid: z.string(),
+  password: z.optional(z.string()),
+  congestion_control: z.optional(z.enum(["cubic", "new_reno", "bbr"])),
+  udp_relay_mode: z.optional(z.enum(["native", "quic"])),
+  udp_over_stream: z.optional(z.boolean()),
+  zero_rtt_handshake: z.optional(z.boolean()),
+  heartbeat: z.optional(z.string()),
+  tls: SingboxOutboundCommonTls,
+});
 export const SingboxOutboundVmess = SingboxOutbound.extend({
   type: z.literal("vmess"),
   uuid: z.string(),
@@ -220,6 +246,7 @@ export const Singbox = z.object({
     SingboxOutboundShadowsocks,
     SingboxOutboundSocks,
     SingboxOutboundTrojan,
+    SingboxOutboundTUIC,
     SingboxOutboundVmess,
   ])),
 });
@@ -236,5 +263,6 @@ export type SingboxOutboundShadowsocks = z.infer<
 >;
 export type SingboxOutboundSocks = z.infer<typeof SingboxOutboundSocks>;
 export type SingboxOutboundTrojan = z.infer<typeof SingboxOutboundTrojan>;
+export type SingboxOutboundTUIC = z.infer<typeof SingboxOutboundTUIC>;
 export type SingboxOutboundVmess = z.infer<typeof SingboxOutboundVmess>;
 export type Singbox = z.infer<typeof Singbox>;

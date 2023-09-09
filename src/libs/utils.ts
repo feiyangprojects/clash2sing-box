@@ -7,6 +7,7 @@ import {
   ClashProxyShadowsocks,
   ClashProxySocks5,
   ClashProxyTrojan,
+  ClashProxyTUIC,
   ClashProxyVmess,
   Singbox,
   SingboxOutboundHttp,
@@ -15,6 +16,7 @@ import {
   SingboxOutboundShadowsocks,
   SingboxOutboundSocks,
   SingboxOutboundTrojan,
+  SingboxOutboundTUIC,
   SingboxOutboundVmess,
 } from "./types.ts";
 
@@ -59,6 +61,11 @@ export function convert(
           SingboxOutboundTrojan.parse(convertTrojan(proxy)),
         );
         break;
+      case "tuic":
+          singbox.outbounds.push(
+            SingboxOutboundTUIC.parse(convertTUIC(proxy)),
+          );
+          break;
       case "vmess":
         singbox.outbounds.push(
           SingboxOutboundVmess.parse(convertVmess(proxy)),
@@ -243,6 +250,50 @@ function convertTrojan(proxy: ClashProxyTrojan): SingboxOutboundTrojan {
   }
 
   return outbound;
+}
+
+function convertTUIC(proxy: ClashProxyTUIC): SingboxOutboundTUIC{
+  const outbound: SingboxOutboundTUIC = {
+    type: "tuic",
+    tag: proxy.name,
+    server: proxy.server,
+    server_port: proxy.port,
+    uuid: proxy.uuid,
+    tls: { enabled: true },
+  };
+
+  if (proxy.password !== undefined) {
+    outbound.password = proxy.password
+  }
+  if (proxy["heartbeat-interval"]  !== undefined){
+    outbound.heartbeat = (proxy["heartbeat-interval"] / 1000).toString() + 's'
+  }
+  if (proxy["reduce-rtt"] !== undefined && proxy["reduce-rtt"] == true) {
+    outbound.zero_rtt_handshake = true
+  }
+  if (proxy["udp-relay-mode"] !== undefined) {
+    outbound.udp_relay_mode = proxy["udp-relay-mode"]
+  }
+  if (proxy["congestion-controller"] !== undefined) {
+    outbound.congestion_control = proxy["congestion-controller"]
+  }
+  if (proxy["udp-over-stream"] !== undefined&&proxy["udp-over-stream"] == true) {
+    outbound.udp_over_stream = true
+  }
+  if (proxy.sni !== undefined) {
+    outbound.tls!.server_name = proxy.sni!;
+  }
+  if (
+    proxy["skip-cert-verify"] !== undefined &&
+    proxy["skip-cert-verify"] === true
+  ) {
+    outbound.tls!.insecure = true;
+  }
+  if (proxy.alpn !== undefined) {
+    outbound.tls!.alpn = proxy.alpn!;
+  }
+
+  return outbound
 }
 
 function convertVmess(proxy: ClashProxyVmess): SingboxOutboundVmess {

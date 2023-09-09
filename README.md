@@ -11,6 +11,7 @@
 |Shadowsocks|O||
 |Socks|O||
 |Trojan|O|Trojan-Go features not implemented|
+|TUIC|O||
 |Vmess|O|sing-box limitation: protocol tcp not supported|
 
 ## Usage

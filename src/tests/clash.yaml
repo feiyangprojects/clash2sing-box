@@ -625,27 +625,37 @@ proxies: # socks5
 #    reserved: "U4An"
 #    # 数组格式也是合法的
 #    # reserved: [209,98,59]
-#  
-#  # tuic
-#  - name: tuic
-#    server: www.example.com
-#    port: 10443
-#    type: tuic
-#    token: TOKEN
-#    # ip: 127.0.0.1 # for overwriting the DNS lookup result of the server address set in option 'server'
-#    # heartbeat-interval: 10000
-#    # alpn: [h3]
-#    disable-sni: true
-#    reduce-rtt: true
-#    request-timeout: 8000
-#    udp-relay-mode: native # Available: "native", "quic". Default: "native"
-#    # congestion-controller: bbr # Available: "cubic", "new_reno", "bbr". Default: "cubic"
-#    # max-udp-relay-packet-size: 1500
-#    # fast-open: true
-#    # skip-cert-verify: true
-#    # max-open-streams: 20 # default 100, too many open streams may hurt performance
-#    # sni: example.com
-#  
+  
+  # tuic
+  - name: tuic
+    server: www.example.com
+    port: 10443
+    type: tuic
+    # tuicV4必须填写token （不可同时填写uuid和password）
+    token: TOKEN
+    # tuicV5必须填写uuid和password（不可同时填写token）
+    uuid: 00000000-0000-0000-0000-000000000001
+    password: PASSWORD_1
+    # ip: 127.0.0.1 # for overwriting the DNS lookup result of the server address set in option 'server'
+    # heartbeat-interval: 10000
+    # alpn: [h3]
+    disable-sni: true
+    reduce-rtt: true
+    request-timeout: 8000
+    udp-relay-mode: native # Available: "native", "quic". Default: "native"
+    # congestion-controller: bbr # Available: "cubic", "new_reno", "bbr". Default: "cubic"
+    # cwnd: 10 # default: 32
+    # max-udp-relay-packet-size: 1500
+    # fast-open: true
+    # skip-cert-verify: true
+    # max-open-streams: 20 # default 100, too many open streams may hurt performance
+    # sni: example.com
+    #
+    # meta和sing-box私有扩展，将ss-uot用于udp中继，开启此选项后udp-relay-mode将失效
+    # 警告，与原版tuic不兼容！！！
+    # udp-over-stream: false
+    # udp-over-stream-version: 1
+  
 #  # ShadowsocksR
 #  # The supported ciphers (encryption methods): all stream ciphers in ss
 #  # The supported obfses:
