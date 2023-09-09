@@ -15,25 +15,19 @@ const options = {
   },
   string: ["input", "output", "merge-with"],
 };
-const args = flags_usage.parseFlags(Deno.args, options);
+const flags = flags_usage.processFlags(Deno.args, options);
 
-if (
-  args.help === undefined &&
-  (args.input !== undefined && args.output !== undefined)
-) {
+if (flags.input !== undefined && flags.output !== undefined) {
   const encoder = new TextEncoder();
-  let output;
-  if (args["merge-with"] !== undefined) {
-    output = encoder.encode(
-      convert(
-        Deno.readTextFileSync(args.input),
-        Deno.readTextFileSync(args["merge-with"]!),
-      ),
-    );
-  } else {
-    output = encoder.encode(convert(Deno.readTextFileSync(args.input), "{}"));
-  }
-  Deno.writeFileSync(args.output, output);
+  
+  const args: [string, string] = [
+    Deno.readTextFileSync(flags.input),
+    flags["merge-with"] !== undefined
+      ? Deno.readTextFileSync(flags["merge-with"]!)
+      : "{}",
+  ];
+
+  Deno.writeFileSync(flags.output, encoder.encode(convert(...args)));
 } else {
   flags_usage.logUsage(options);
 }

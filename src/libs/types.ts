@@ -1,21 +1,20 @@
 import { z } from "zod";
 
-export const ClashProxyHttp = z.object({
+export const ClashProxy = z.object({
   name: z.string(),
-  type: z.literal("http"),
   server: z.string(),
   port: z.number(),
+});
+export const ClashProxyHttp = ClashProxy.extend({
+  type: z.literal("http"),
   username: z.optional(z.string()),
   password: z.optional(z.string()),
   tls: z.optional(z.boolean()),
   "skip-cert-verify": z.optional(z.boolean()),
   sni: z.optional(z.string()),
 });
-export const ClashProxyHysteria = z.object({
-  name: z.string(),
+export const ClashProxyHysteria = ClashProxy.extend({
   type: z.literal("hysteria"),
-  server: z.string(),
-  port: z.number(),
   "auth-str": z.optional(z.string()),
   obfs: z.optional(z.string()),
   alpn: z.optional(z.array(z.string())),
@@ -26,22 +25,16 @@ export const ClashProxyHysteria = z.object({
   tls: z.optional(z.boolean()),
   "skip-cert-verify": z.optional(z.boolean()),
 });
-export const ClashProxySocks5 = z.object({
-  name: z.string(),
+export const ClashProxySocks5 = ClashProxy.extend({
   type: z.literal("socks5"),
-  server: z.string(),
-  port: z.number(),
   username: z.optional(z.string()),
   password: z.optional(z.string()),
   tls: z.optional(z.boolean()),
   "skip-cert-verify": z.optional(z.boolean()),
   udp: z.optional(z.boolean()),
 });
-export const ClashProxyShadowsocks = z.object({
-  name: z.string(),
+export const ClashProxyShadowsocks = ClashProxy.extend({
   type: z.literal("ss"),
-  server: z.string(),
-  port: z.number(),
   cipher: z.enum([
     // Temporary workaround
     "2022-blake3-aes-128-gcm",
@@ -73,22 +66,16 @@ export const ClashProxyShadowsocks = z.object({
     mux: z.optional(z.boolean()),
   })),
 });
-export const ClashProxyTrojan = z.object({
-  name: z.string(),
+export const ClashProxyTrojan = ClashProxy.extend({
   type: z.literal("trojan"),
-  server: z.string(),
-  port: z.number(),
   password: z.string(),
   udp: z.optional(z.boolean()),
   sni: z.optional(z.string()),
   alpn: z.optional(z.array(z.string())),
   "skip-cert-verify": z.optional(z.boolean()),
 });
-export const ClashProxyVmess = z.object({
-  name: z.string(),
+export const ClashProxyVmess = ClashProxy.extend({
   type: z.literal("vmess"),
-  server: z.string(),
-  port: z.number(),
   uuid: z.string(),
   // Temporary workaround
   alterId: z.coerce.number(),
@@ -128,6 +115,7 @@ export const Clash = z.object({
   ])),
 });
 
+export type ClashProxy = z.infer<typeof ClashProxy>;
 export type ClashProxyHttp = z.infer<typeof ClashProxyHttp>;
 export type ClashProxyHysteria = z.infer<typeof ClashProxyHysteria>;
 export type ClashProxyShadowsocks = z.infer<typeof ClashProxyShadowsocks>;
@@ -136,6 +124,12 @@ export type ClashProxyTrojan = z.infer<typeof ClashProxyTrojan>;
 export type ClashProxyVmess = z.infer<typeof ClashProxyVmess>;
 export type Clash = z.infer<typeof Clash>;
 
+export const SingboxOutbound = z.object({
+  tag: z.string(),
+  server: z.string(),
+  server_port: z.number(),
+  network: z.optional(z.enum(["tcp", "udp", "tcp,udp"])),
+});
 export const SingboxOutboundCommonTls = z.object({
   enabled: z.boolean(),
   disable_sni: z.optional(z.boolean()),
@@ -143,25 +137,18 @@ export const SingboxOutboundCommonTls = z.object({
   insecure: z.optional(z.boolean()),
   alpn: z.optional(z.array(z.string())),
 });
-export const SingboxOutboundHttp = z.object({
+export const SingboxOutboundHttp = SingboxOutbound.extend({
   type: z.literal("http"),
-  tag: z.string(),
-  server: z.string(),
-  server_port: z.number(),
   username: z.optional(z.string()),
   password: z.optional(z.string()),
   tls: z.optional(SingboxOutboundCommonTls),
 });
-export const SingboxOutboundHysteria = z.object({
+export const SingboxOutboundHysteria = SingboxOutbound.extend({
   type: z.literal("hysteria"),
-  tag: z.string(),
-  server: z.string(),
-  server_port: z.number(),
   up: z.string(),
   down: z.string(),
   obfs: z.optional(z.string()),
   auth_str: z.optional(z.string()),
-  network: z.optional(z.enum(["tcp", "udp", "tcp,udp"])),
   tls: SingboxOutboundCommonTls,
 });
 export const SingboxOutboundSelector = z.object({
@@ -170,11 +157,8 @@ export const SingboxOutboundSelector = z.object({
   outbounds: z.array(z.string()),
   default: z.optional(z.string()),
 });
-export const SingboxOutboundShadowsocks = z.object({
+export const SingboxOutboundShadowsocks = SingboxOutbound.extend({
   type: z.literal("shadowsocks"),
-  tag: z.string(),
-  server: z.string(),
-  server_port: z.number(),
   method: z.enum([
     "2022-blake3-aes-128-gcm",
     "2022-blake3-aes-256-gcm",
@@ -198,37 +182,24 @@ export const SingboxOutboundShadowsocks = z.object({
   password: z.string(),
   plugin: z.optional(z.string()),
   plugin_opts: z.optional(z.string()),
-  network: z.optional(z.enum(["tcp", "udp", "tcp,udp"])),
 });
-export const SingboxOutboundSocks = z.object({
+export const SingboxOutboundSocks = SingboxOutbound.extend({
   type: z.literal("socks"),
-  tag: z.string(),
-  server: z.string(),
-  server_port: z.number(),
   username: z.optional(z.string()),
   password: z.optional(z.string()),
-  network: z.optional(z.enum(["tcp", "udp", "tcp,udp"])),
 });
-export const SingboxOutboundTrojan = z.object({
+export const SingboxOutboundTrojan = SingboxOutbound.extend({
   type: z.literal("trojan"),
-  tag: z.string(),
-  server: z.string(),
-  server_port: z.number(),
   password: z.string(),
-  network: z.optional(z.enum(["tcp", "udp", "tcp,udp"])),
   tls: SingboxOutboundCommonTls,
 });
-export const SingboxOutboundVmess = z.object({
+export const SingboxOutboundVmess = SingboxOutbound.extend({
   type: z.literal("vmess"),
-  tag: z.string(),
-  server: z.string(),
-  server_port: z.number(),
   uuid: z.string(),
   security: z.optional(
     z.enum(["auto", "none", "zero", "aes-128-gcm", "chacha20-poly1305"]),
   ),
   alter_id: z.optional(z.number()),
-  network: z.optional(z.enum(["tcp", "udp", "tcp,udp"])),
   tls: z.optional(SingboxOutboundCommonTls),
   transport: z.optional(z.object({
     type: z.enum(["http", "ws", "grpc"]),
@@ -253,6 +224,7 @@ export const Singbox = z.object({
   ])),
 });
 
+export type SingboxOutbound = z.infer<typeof SingboxOutbound>;
 export type SingboxOutboundCommonTls = z.infer<
   typeof SingboxOutboundCommonTls
 >;
