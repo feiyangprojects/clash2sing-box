@@ -116,7 +116,7 @@ const convertVmessOrVLESSTransport = z.function()
         "type": "ws",
       };
       if (proxy["ws-opts"].path !== undefined) {
-        transport.path = proxy["ws-opts"].path[0]!;
+        transport.path = proxy["ws-opts"].path!;
       }
       if (proxy["ws-opts"].headers !== undefined) {
         transport.headers = proxy["ws-opts"].headers;
