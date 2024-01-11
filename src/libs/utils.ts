@@ -420,6 +420,21 @@ const convertVLESS = z.function()
     if (proxy.flow !== undefined) {
       outbound.flow = proxy.flow;
     }
+    if (proxy.udp !== undefined && proxy.udp! === false) {
+      outbound.network = "tcp";
+    }
+    if (proxy.tls !== undefined && proxy.tls === true) {
+      outbound.tls = { enabled: true };
+      if (proxy.servername !== undefined) {
+        outbound.tls.server_name = proxy.servername!;
+      }
+      if (
+        proxy["skip-cert-verify"] !== undefined &&
+        proxy["skip-cert-verify"] === true
+      ) {
+        outbound.tls.insecure = true;
+      }
+    }
 
     return outbound;
   });
