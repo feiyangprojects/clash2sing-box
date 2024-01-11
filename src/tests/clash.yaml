@@ -495,41 +495,41 @@ proxies: # socks5
 #      public-key: xxx
 #      short-id: xxx # optional
 #    client-fingerprint: chrome # cannot be empty
-#  
-#  - name: "vless-reality-grpc"
-#    type: vless
-#    server: server
-#    port: 443
-#    uuid: uuid
-#    network: grpc
-#    tls: true
-#    udp: true
-#    flow:
-#    # skip-cert-verify: true
-#    client-fingerprint: chrome
-#    servername: testingcf.jsdelivr.net
-#    grpc-opts:
-#      grpc-service-name: "grpc"
-#    reality-opts:
-#      public-key: CrrQSjAG_YkHLwvM2M-7XkKJilgL5upBKCp0od0tLhE
-#      short-id: 10f897e26c4b9478
-#  
-#  - name: "vless-ws"
-#    type: vless
-#    server: server
-#    port: 443
-#    uuid: uuid
-#    udp: true
-#    tls: true
-#    network: ws
-#    # client-fingerprint: random # Available: "chrome","firefox","safari","random","none"
-#    servername: example.com # priority over wss host
-#    # skip-cert-verify: true
-#    # fingerprint: xxxx
-#    ws-opts:
-#      path: "/"
-#      headers:
-#        Host: example.com
+  
+  - name: "vless-reality-grpc"
+    type: vless
+    server: server
+    port: 443
+    uuid: uuid
+    network: grpc
+    tls: true
+    udp: true
+    flow: xtls-rprx-vision
+    # skip-cert-verify: true
+    client-fingerprint: chrome
+    servername: testingcf.jsdelivr.net
+    grpc-opts:
+      grpc-service-name: "grpc"
+    reality-opts:
+      public-key: CrrQSjAG_YkHLwvM2M-7XkKJilgL5upBKCp0od0tLhE
+      short-id: 10f897e26c4b9478
+  
+  - name: "vless-ws"
+    type: vless
+    server: server
+    port: 443
+    uuid: uuid
+    udp: true
+    tls: true
+    network: ws
+    # client-fingerprint: random # Available: "chrome","firefox","safari","random","none"
+    servername: example.com # priority over wss host
+    # skip-cert-verify: true
+    # fingerprint: xxxx
+    ws-opts:
+      path: "/"
+      headers:
+        Host: example.com
   
   # Trojan
   - name: "trojan"
