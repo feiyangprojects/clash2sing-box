@@ -137,7 +137,9 @@ export const Clash = z.object({
 });
 
 export type ClashProxy = z.infer<typeof ClashProxy>;
-export type ClashProxyBaseVmessOrVLESS = z.infer<typeof ClashProxyBaseVmessOrVLESS>;
+export type ClashProxyBaseVmessOrVLESS = z.infer<
+  typeof ClashProxyBaseVmessOrVLESS
+>;
 export type ClashProxyHttp = z.infer<typeof ClashProxyHttp>;
 export type ClashProxyHysteria = z.infer<typeof ClashProxyHysteria>;
 export type ClashProxyShadowsocks = z.infer<typeof ClashProxyShadowsocks>;
@@ -148,6 +150,18 @@ export type ClashProxyVmess = z.infer<typeof ClashProxyVmess>;
 export type ClashProxyVLESS = z.infer<typeof ClashProxyVLESS>;
 export type Clash = z.infer<typeof Clash>;
 
+export const SingboxExperimental = z.object({
+  cache_file: z.optional(z.object({
+    enabled: z.optional(z.boolean()),
+    path: z.optional(z.string()),
+    cache_id: z.optional(z.string()),
+  })),
+  clash_api: z.optional(z.object({
+    external_controller: z.optional(z.string()),
+    external_ui: z.optional(z.string()),
+    secret: z.optional(z.string()),
+  })),
+});
 export const SingboxOutbound = z.object({
   tag: z.string(),
   server: z.string(),
@@ -273,6 +287,7 @@ export const SingboxOutboundVLESS = SingboxOutbound.extend({
   transport: SingboxOutboundCommonVmessOrVLESSTransport,
 });
 export const Singbox = z.object({
+  experimental: z.optional(SingboxExperimental),
   outbounds: z.array(z.discriminatedUnion("type", [
     SingboxOutboundHttp,
     SingboxOutboundHysteria,
@@ -286,6 +301,7 @@ export const Singbox = z.object({
   ])),
 });
 
+export type SingboxExperimental = z.infer<typeof SingboxExperimental>;
 export type SingboxOutbound = z.infer<typeof SingboxOutbound>;
 export type SingboxOutboundCommonTls = z.infer<
   typeof SingboxOutboundCommonTls
