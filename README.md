@@ -21,13 +21,19 @@
 $ deno run --import-map=https://raw.githubusercontent.com/feiyangprojects/clash2sing-box/main/import_map.json \
            https://raw.githubusercontent.com/feiyangprojects/clash2sing-box/main/src/index.ts \
            --help
-Usage: clash2sing-box [OPTION]...
+Usage: clash2sing-box [OPTION]... INPUT OUTPUT
 
 Options:
-  --input <file>       Set Clash configuration file
-  --output <file>      Set sing-box configuration file
-  --merge-with <file>  Set external configuration to merge after conversion
-  -h, -?, --help       Display usage information
+  --experimental-cachefile-enabled <boolean>        Enable cache file feature
+  --experimental-cachefile-path <file>              Set path of cache file feature
+  --experimental-cachefile-cacheid <string>         Set cache id of cache file feature
+  --experimental-clashapi-externalcontroller <url>  Set external controller address of Clash API feature, empty to disable
+  --experimental-clashapi-externalui <directory>    Set external UI path of Clash API feature
+  --experimental-clashapi-secret <string>           Set authorization secret of Clash API feature
+  --outbound-selector-default <number>              Set the n-th of outbound as the default of selector outbound, will ignore for invalid number
+  --outbound-selector-tag <string>                  Set the name of selector outbound
+  --merge-with <file>                               Set external configuration to merge after conversion
+  -h, -?, --help                                    Display usage information
 ```
 
 ### Install Deno
@@ -47,12 +53,10 @@ $ deno run --allow-read=./src/tests/clash.yaml,./src/tests/sing-box-mergeable.js
            --import-map=https://raw.githubusercontent.com/feiyangprojects/clash2sing-box/main/import_map.json \
            # Point to software entry
            https://raw.githubusercontent.com/feiyangprojects/clash2sing-box/main/src/index.ts \
-           # Set Clash configuration file
-           --input ./src/tests/clash.yaml \
-           # Set sing-box configuration file
-           --output ./src/tests/sing-box.json \
            # Mergeable injection is optional
-           --merge-with ./src/tests/sing-box-mergeable.json
+           --merge-with ./src/tests/sing-box-mergeable.json \
+           # Set input and output configuration file
+           ./src/tests/clash.yaml ./src/tests/sing-box.json
 $ ls ./src/tests/
 clash.yaml  sing-box.json  sing-box-mergeable.json
 ```

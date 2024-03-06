@@ -13,6 +13,7 @@ import {
   ClashProxyVLESS,
   ClashProxyVmess,
   Singbox,
+  SingboxExperimental,
   SingboxOutboundCommonVmessOrVLESSTransport,
   SingboxOutboundHttp,
   SingboxOutboundHysteria,
@@ -24,21 +25,57 @@ import {
   SingboxOutboundVLESS,
   SingboxOutboundVmess,
 } from "./types.ts";
+import { Args } from "flags";
 
 export function convert(
   input: string,
-  mergeable: string,
+  flags: Args,
 ): string {
   const clash: Clash = Clash.parse(yaml.parse(input));
 
   const singbox: Singbox = Singbox.parse({
     outbounds: [],
   });
-  const singboxSelector: SingboxOutboundSelector = {
+
+  const singboxExperimental: SingboxExperimental = {};
+  const singboxOutboundSelector: SingboxOutboundSelector = {
     type: "selector",
     tag: "selector",
     outbounds: [],
   };
+  if (flags["experimental-cachefile-enabled"] === true) {
+    singboxExperimental.cache_file = { enabled: true };
+
+    if (flags["experimental-cachefile-cacheid"] !== undefined) {
+      singboxExperimental.cache_file.cache_id =
+        flags["experimental-cachefile-cacheid"];
+    }
+    if (flags["experimental-cachefile-path"] !== undefined) {
+      singboxExperimental.cache_file.path =
+        flags["experimental-cachefile-path"];
+    }
+  }
+  if (flags["experimental-clashapi-externalcontroller"] !== undefined) {
+    singboxExperimental.clash_api = {
+      external_controller: flags["experimental-clashapi-externalcontroller"],
+    };
+
+    if (flags["experimental-clashapi-externalui"] !== undefined) {
+      singboxExperimental.clash_api.external_ui =
+        flags["experimental-clashapi-externalui"];
+    }
+    if (flags["experimental-clashapi-secret"] !== undefined) {
+      singboxExperimental.clash_api.secret =
+        flags["experimental-clashapi-secret"];
+    }
+  }
+  if (Object.keys(singboxExperimental).length > 0) {
+    singbox.experimental = SingboxExperimental.parse(singboxExperimental);
+  }
+  if (flags["outbound-selector-tag"] !== undefined) {
+    singboxOutboundSelector.tag = flags["outbound-selector-tag"]
+  }
+
   for (const proxy of clash.proxies) {
     switch (proxy.type) {
       case "http":
@@ -66,15 +103,32 @@ export function convert(
         singbox.outbounds.push(convertVLESS(proxy));
         break;
     }
-    singboxSelector.outbounds.push(proxy.name);
-  }
-  if (singbox.outbounds.length > 0) {
-    singboxSelector.default = singbox.outbounds.at(-1)!.tag;
+    singboxOutboundSelector.outbounds.push(proxy.name);
   }
 
-  singbox.outbounds.push(SingboxOutboundSelector.parse(singboxSelector));
+  if (flags["outbound-selector-default"] != undefined) {
+    const outbound = singbox.outbounds.at(
+      parseInt(flags["outbound-selector-default"]),
+    );
+    if (outbound != undefined) {
+      singboxOutboundSelector.default = outbound!.tag;
+    } else {
+      throw new Error("Invalid outbound ordinal number");
+    }
+  }
+  singbox.outbounds.push(
+    SingboxOutboundSelector.parse(singboxOutboundSelector),
+  );
 
-  return JSON.stringify(deepmerge(singbox, JSON.parse(mergeable)), null, 4);
+  if (flags["merge-with"] !== undefined) {
+    return JSON.stringify(
+      deepmerge(JSON.parse(flags["merge-with"]), singbox),
+      null,
+      4,
+    );
+  } else {
+    return JSON.stringify(singbox, null, 4);
+  }
 }
 
 const convertVmessOrVLESSTransport = z.function()
