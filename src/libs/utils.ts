@@ -286,7 +286,11 @@ const convertShadowsocks = z.function()
       outbound.network = "tcp";
     }
     if (proxy.plugin !== undefined) {
-      outbound.plugin = proxy.plugin!;
+      if (proxy.plugin === "obfs") {
+        outbound.plugin = "obfs-local";
+      } else {
+        outbound.plugin = proxy.plugin!;
+      }
       outbound.plugin_opts = "";
       if (proxy["plugin-opts"] !== undefined) {
         outbound.plugin_opts += `mode=${proxy["plugin-opts"].mode!}`;
