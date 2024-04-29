@@ -73,7 +73,7 @@ export function convert(
     singbox.experimental = SingboxExperimental.parse(singboxExperimental);
   }
   if (flags["outbound-selector-tag"] !== undefined) {
-    singboxOutboundSelector.tag = flags["outbound-selector-tag"]
+    singboxOutboundSelector.tag = flags["outbound-selector-tag"];
   }
 
   for (const proxy of clash.proxies) {
@@ -312,6 +312,14 @@ const convertShadowsocks = z.function()
             outbound.plugin_opts += `;mux=${proxy["plugin-opts"].mux!}`;
           }
         }
+      }
+    }
+    if (
+      proxy["udp-over-tcp"] !== undefined && proxy["udp-over-tcp"]! === true
+    ) {
+      outbound.udp_over_tcp = { enabled: true };
+      if (proxy["udp-over-tcp-version"] !== undefined) {
+        outbound.udp_over_tcp.version = proxy["udp-over-tcp-version"]
       }
     }
 

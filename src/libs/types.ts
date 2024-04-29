@@ -91,6 +91,8 @@ export const ClashProxyShadowsocks = ClashProxy.extend({
     path: z.optional(z.string()),
     mux: z.optional(z.boolean()),
   })),
+  "udp-over-tcp": z.optional(z.boolean()),
+  "udp-over-tcp-version": z.optional(z.union([z.literal(1), z.literal(2)])),
 });
 export const ClashProxyTrojan = ClashProxy.extend({
   type: z.literal("trojan"),
@@ -247,6 +249,10 @@ export const SingboxOutboundShadowsocks = SingboxOutbound.extend({
   password: z.string(),
   plugin: z.optional(z.string()),
   plugin_opts: z.optional(z.string()),
+  udp_over_tcp: z.optional(z.object({
+    enabled: z.boolean(),
+    version: z.optional(z.union([z.literal(1), z.literal(2)])),
+  })),
 });
 export const SingboxOutboundSocks = SingboxOutbound.extend({
   type: z.literal("socks"),
