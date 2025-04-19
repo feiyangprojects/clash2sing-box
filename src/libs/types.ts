@@ -17,6 +17,8 @@ export const ClashProxyBaseVmessOrVLESS = ClashProxy.extend({
     headers: z.optional(z.record(z.string())),
     "max-early-data": z.optional(z.number()),
     "early-data-header-name": z.optional(z.string()),
+    "v2ray-http-upgrade": z.optional(z.boolean()),
+    "v2ray-http-upgrade-fast-open": z.optional(z.boolean())
   })),
   "h2-opts": z.optional(z.object({
     host: z.optional(z.array(z.string())),
@@ -181,18 +183,20 @@ export const SingboxOutboundCommonVmessOrVLESSTransportGrpc = z.object({
   type: z.literal("grpc"),
   service_name: z.optional(z.string()),
 });
-export const SingboxOutboundCommonVmessOrVLESSTransportHttp = z.object({
-  type: z.literal("http"),
+export const SingboxOutboundCommonVmessOrVLESSTransportCommonHttp = z.object({
   host: z.optional(z.array(z.string())),
   path: z.optional(z.string()),
   method: z.optional(z.string()),
   headers: z.optional(z.record(z.string())),
+})
+export const SingboxOutboundCommonVmessOrVLESSTransportHttp = SingboxOutboundCommonVmessOrVLESSTransportCommonHttp.extend({
+  type: z.literal("http"),
 });
-export const SingboxOutboundCommonVmessOrVLESSTransportWebSocket = z.object({
+export const SingboxOutboundCommonVmessOrVLESSTransportHttpUpgrade = SingboxOutboundCommonVmessOrVLESSTransportCommonHttp.extend({
+  type: z.literal("httpupgrade"),
+});
+export const SingboxOutboundCommonVmessOrVLESSTransportWebSocket = SingboxOutboundCommonVmessOrVLESSTransportCommonHttp.extend({
   type: z.literal("ws"),
-  host: z.optional(z.array(z.string())),
-  path: z.optional(z.string()),
-  headers: z.optional(z.record(z.string())),
   max_early_data: z.optional(z.number()),
   early_data_header_name: z.optional(z.string()),
 });
@@ -201,6 +205,7 @@ export const SingboxOutboundCommonVmessOrVLESSTransport = z.discriminatedUnion(
   [
     SingboxOutboundCommonVmessOrVLESSTransportGrpc,
     SingboxOutboundCommonVmessOrVLESSTransportHttp,
+    SingboxOutboundCommonVmessOrVLESSTransportHttpUpgrade,
     SingboxOutboundCommonVmessOrVLESSTransportWebSocket,
   ],
 );
@@ -317,6 +322,9 @@ export type SingboxOutboundCommonVmessOrVLESSTransportGrpc = z.infer<
 >;
 export type SingboxOutboundCommonVmessOrVLESSTransportHttp = z.infer<
   typeof SingboxOutboundCommonVmessOrVLESSTransportHttp
+>;
+export type SingboxOutboundCommonVmessOrVLESSTransportHttpUpgrade = z.infer<
+  typeof SingboxOutboundCommonVmessOrVLESSTransportHttpUpgrade
 >;
 export type SingboxOutboundCommonVmessOrVLESSTransportWebSocket = z.infer<
   typeof SingboxOutboundCommonVmessOrVLESSTransportWebSocket

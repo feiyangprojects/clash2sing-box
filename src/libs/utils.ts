@@ -165,22 +165,37 @@ const convertVmessOrVLESSTransport = z.function()
         transport.path = proxy["h2-opts"].path!;
       }
       return transport;
-    } else if (proxy["ws-opts"] !== undefined) {
+    } else if (
+      proxy["ws-opts"] !== undefined &&
+      proxy["ws-opts"]["v2ray-http-upgrade"] === true
+    ) {
       const transport: SingboxOutboundCommonVmessOrVLESSTransport = {
-        "type": "ws",
+        "type": "httpupgrade",
       };
       if (proxy["ws-opts"].path !== undefined) {
         transport.path = proxy["ws-opts"].path!;
       }
       if (proxy["ws-opts"].headers !== undefined) {
         transport.headers = proxy["ws-opts"].headers;
-        if (proxy["ws-opts"]["max-early-data"] !== undefined) {
-          transport.max_early_data = proxy["ws-opts"]["max-early-data"]!;
-        }
-        if (proxy["ws-opts"]["early-data-header-name"] !== undefined) {
-          transport.early_data_header_name =
-            proxy["ws-opts"]["early-data-header-name"]!;
-        }
+      }
+      return transport;
+    } else if (proxy["ws-opts"] !== undefined) {
+      const transport: SingboxOutboundCommonVmessOrVLESSTransport = {
+        "type": "ws",
+      };
+
+      if (proxy["ws-opts"].path !== undefined) {
+        transport.path = proxy["ws-opts"].path!;
+      }
+      if (proxy["ws-opts"].headers !== undefined) {
+        transport.headers = proxy["ws-opts"].headers;
+      }
+      if (proxy["ws-opts"]["max-early-data"] !== undefined) {
+        transport.max_early_data = proxy["ws-opts"]["max-early-data"]!;
+      }
+      if (proxy["ws-opts"]["early-data-header-name"] !== undefined) {
+        transport.early_data_header_name =
+          proxy["ws-opts"]["early-data-header-name"]!;
       }
       return transport;
     } else if (proxy["grpc-opts"] !== undefined) {
@@ -319,7 +334,7 @@ const convertShadowsocks = z.function()
     ) {
       outbound.udp_over_tcp = { enabled: true };
       if (proxy["udp-over-tcp-version"] !== undefined) {
-        outbound.udp_over_tcp.version = proxy["udp-over-tcp-version"]
+        outbound.udp_over_tcp.version = proxy["udp-over-tcp-version"];
       }
     }
 

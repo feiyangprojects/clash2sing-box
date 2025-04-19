@@ -530,7 +530,26 @@ proxies: # socks5
       path: "/"
       headers:
         Host: example.com
-  
+
+  - name: "vless-ws"
+    type: vless
+    server: server
+    port: 443
+    uuid: uuid
+    udp: true
+    tls: true
+    network: ws
+    # client-fingerprint: random # Available: "chrome","firefox","safari","random","none"
+    servername: example.com # priority over wss host
+    # skip-cert-verify: true
+    # fingerprint: xxxx
+    ws-opts:
+      path: "/"
+      headers:
+        Host: example.com
+      v2ray-http-upgrade: true
+      # v2ray-http-upgrade-fast-open: false
+
   # Trojan
   - name: "trojan"
     type: trojan
