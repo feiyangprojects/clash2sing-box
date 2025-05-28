@@ -10,7 +10,7 @@
 |Hysteria|O|sing-box limitation: protocol faketcp or wechat-video not supported|
 |Shadowsocks|O||
 |Socks|O||
-|Trojan|O|Trojan-Go features not implemented|
+|Trojan|?|Trojan-Go features not implemented|
 |TUIC|O||
 |Vmess|O|sing-box limitation: protocol tcp not supported|
 |VLESS|O|sing-box limitation: protocol tcp not supported|
