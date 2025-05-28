@@ -17,6 +17,7 @@ import {
   SingboxOutboundCommonVmessOrVLESSTransport,
   SingboxOutboundHttp,
   SingboxOutboundHysteria,
+  SingboxOutbounds,
   SingboxOutboundSelector,
   SingboxOutboundShadowsocks,
   SingboxOutboundSocks,
@@ -77,33 +78,58 @@ export function convert(
   }
 
   for (const proxy of clash.proxies) {
+    let outbound: SingboxOutbounds;
+
     switch (proxy.type) {
       case "http":
-        singbox.outbounds.push(convertHttp(proxy));
+        outbound = convertHttp(proxy);
         break;
       case "hysteria":
-        singbox.outbounds.push(convertHysteria(proxy));
+        outbound = convertHysteria(proxy);
         break;
       case "ss":
-        singbox.outbounds.push(convertShadowsocks(proxy));
+        outbound = convertShadowsocks(proxy);
         break;
       case "socks5":
-        singbox.outbounds.push(convertSocks5ToSocks(proxy));
+        outbound = convertSocks5ToSocks(proxy);
         break;
       case "trojan":
-        singbox.outbounds.push(convertTrojan(proxy));
+        outbound = convertTrojan(proxy);
         break;
       case "tuic":
-        singbox.outbounds.push(convertTUIC(proxy));
+        outbound = convertTUIC(proxy);
         break;
       case "vmess":
-        singbox.outbounds.push(convertVmess(proxy));
+        outbound = convertVmess(proxy);
         break;
       case "vless":
-        singbox.outbounds.push(convertVLESS(proxy));
+        outbound = convertVLESS(proxy);
         break;
     }
-    singboxOutboundSelector.outbounds.push(proxy.name);
+
+    if (proxy.udp !== undefined && proxy.udp! === false) {
+      outbound.network = "tcp";
+    }
+
+    if (proxy["ip-version"] !== undefined) {
+      switch (proxy["ip-version"]) {
+        case "ipv6-prefer":
+          outbound.domain_strategy = "prefer_ipv6";
+          break;
+        case "ipv4-prefer":
+          outbound.domain_strategy = "prefer_ipv4";
+          break;
+        case "ipv6":
+          outbound.domain_strategy = "ipv6_only";
+          break;
+        case "ipv4":
+          outbound.domain_strategy = "ipv4_only";
+          break;
+      }
+    }
+
+    singbox.outbounds.push(outbound);
+    singboxOutboundSelector.outbounds.push(outbound.tag);
   }
 
   if (flags["outbound-selector-default"] != undefined) {
@@ -297,9 +323,6 @@ const convertShadowsocks = z.function()
       password: proxy.password,
     };
 
-    if (proxy.udp !== undefined && proxy.udp! === false) {
-      outbound.network = "tcp";
-    }
     if (proxy.plugin !== undefined) {
       if (proxy.plugin === "obfs") {
         outbound.plugin = "obfs-local";
@@ -352,9 +375,6 @@ const convertSocks5ToSocks = z.function()
       server_port: proxy.port,
     };
 
-    if (proxy.udp !== undefined && proxy.udp! === false) {
-      outbound.network = "tcp";
-    }
     if (proxy.username !== undefined) {
       outbound.username = proxy.username!;
       if (proxy.password !== undefined) {
@@ -381,9 +401,6 @@ const convertTrojan = z.function()
       tls: { enabled: true },
     };
 
-    if (proxy.udp !== undefined && proxy.udp! === false) {
-      outbound.network = "tcp";
-    }
     if (proxy.sni !== undefined) {
       outbound.tls!.server_name = proxy.sni!;
     }
@@ -466,9 +483,6 @@ const convertVmess = z.function()
       transport: convertVmessOrVLESSTransport(proxy),
     };
 
-    if (proxy.udp !== undefined && proxy.udp! === false) {
-      outbound.network = "tcp";
-    }
     if (proxy.tls !== undefined && proxy.tls === true) {
       outbound.tls = { enabled: true };
       if (proxy.servername !== undefined) {
@@ -500,9 +514,6 @@ const convertVLESS = z.function()
 
     if (proxy.flow !== undefined) {
       outbound.flow = proxy.flow;
-    }
-    if (proxy.udp !== undefined && proxy.udp! === false) {
-      outbound.network = "tcp";
     }
     if (proxy.tls !== undefined && proxy.tls === true) {
       outbound.tls = { enabled: true };
