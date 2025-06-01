@@ -4,7 +4,9 @@
 
 ### Features
 
-|Protocol|Status|Note|
+#### Protocols
+
+|Name|Status|Note|
 |---|---|---|
 |HTTP|O|sing-box limitation: layer tls not supported|
 |Hysteria|O|sing-box limitation: protocol faketcp or wechat-video not supported|
@@ -14,6 +16,13 @@
 |TUIC|O||
 |Vmess|O|sing-box limitation: protocol tcp not supported|
 |VLESS|O|sing-box limitation: protocol tcp not supported|
+
+#### Options
+
+|Name|Status|Note|
+|---|---|---|
+|TCP-only|O||
+|IP Version|?|Only option `ip-version` is implemented|
 
 ## Usage
 
