@@ -1,6 +1,6 @@
 {
   "name": "@fei1yang/clash2sing-box",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "exports": {
     ".": "./src/mod.ts",
     "./types": "./src/libs/types.ts",
@@ -14,9 +14,9 @@
   },
   "publish": {
     "exclude": [
+      ".vscode",
       "src/tests",
-      ".gitignore",
-      "README.md"
+      ".gitignore"
     ]
   }
 }

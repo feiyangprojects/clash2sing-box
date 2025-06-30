@@ -27,9 +27,7 @@
 ## Usage
 
 ```shell
-$ deno run --import-map=https://raw.githubusercontent.com/feiyangprojects/clash2sing-box/main/import_map.json \
-           https://raw.githubusercontent.com/feiyangprojects/clash2sing-box/main/src/index.ts \
-           --help
+$ deno run jsr:@fei1yang/clash2sing-box convert --help
 Usage: clash2sing-box convert <input> <output>
 
 Description:
@@ -63,13 +61,8 @@ Options:
 $ deno run --allow-read=./src/tests/clash.yaml,./src/tests/sing-box-mergeable.json \
            # Grant write permission to output configuration
            --allow-write=./src/tests/sing-box.json \
-           # Use custom import map
-           # this is a fairly complex project, it allows easier module management.
-           --import-map=https://raw.githubusercontent.com/feiyangprojects/clash2sing-box/main/import_map.json \
-           # Point to software entry
-           https://raw.githubusercontent.com/feiyangprojects/clash2sing-box/main/src/index.ts \
-           # Preform conversion
-           convert
+           # Point to software entry and preform conversion
+           jsr:@fei1yang/clash2sing-box convert \
            # Mergeable injection is optional
            --mergeable ./src/tests/sing-box-mergeable.json \
            # Set input and output configuration file
