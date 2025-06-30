@@ -30,19 +30,25 @@
 $ deno run --import-map=https://raw.githubusercontent.com/feiyangprojects/clash2sing-box/main/import_map.json \
            https://raw.githubusercontent.com/feiyangprojects/clash2sing-box/main/src/index.ts \
            --help
-Usage: clash2sing-box [OPTION]... INPUT OUTPUT
+Usage: clash2sing-box convert <input> <output>
+
+Description:
+
+  Convert configuration
 
 Options:
-  --experimental-cachefile-enabled <boolean>        Enable cache file feature
-  --experimental-cachefile-path <file>              Set path of cache file feature
-  --experimental-cachefile-cacheid <string>         Set cache id of cache file feature
-  --experimental-clashapi-externalcontroller <url>  Set external controller address of Clash API feature, empty to disable
-  --experimental-clashapi-externalui <directory>    Set external UI path of Clash API feature
-  --experimental-clashapi-secret <string>           Set authorization secret of Clash API feature
-  --outbound-selector-default <number>              Set the n-th of outbound as the default of selector outbound, will ignore for invalid number
-  --outbound-selector-tag <string>                  Set the name of selector outbound
-  --merge-with <file>                               Set external configuration to merge after conversion
-  -h, -?, --help                                    Display usage information
+
+  -h, --help                                                - Show this help.                                                                                                     
+  --experimental.cachefile.enabled               <boolean>  - Enable cache file feature                                                                                           
+  --experimental.cachefile.path                  <path>     - Path to the cache file                                         (Depends: --experimental.cachefile.path)             
+  --experimental.cachefile.cacheid               <string>   - Identifier for the configuration                               (Depends: --experimental.cachefile.path)             
+  --experimental.clashapi.externalcontroller     <address>  - Clash API listening address                                                                                         
+  --experimental.clashapi.externalui             <path>     - Path to a directory in which the external UI is stored         (Depends: --experimental.clashapi.externalcontroller)
+  --experimental.clashapi.externaluidownloadurl  <url>      - URL to a ZIP to download the external UI                       (Depends: --experimental.clashapi.externalcontroller)
+  --experimental.clashapi.secret                 <string>   - A Bearer token for API Authorization                           (Depends: --experimental.clashapi.externalcontroller)
+  --outbound.selector.default                    <integer>  - Use the n-th outbound as the default in the selector outbound                                                       
+  --outbound.selector.tag                        <string>   - The name(s) of the selector outbound(s)                                                                             
+  --mergeable                                    <path>     - External configuration to merge after the conversion     
 ```
 
 ### Install Deno
@@ -62,8 +68,10 @@ $ deno run --allow-read=./src/tests/clash.yaml,./src/tests/sing-box-mergeable.js
            --import-map=https://raw.githubusercontent.com/feiyangprojects/clash2sing-box/main/import_map.json \
            # Point to software entry
            https://raw.githubusercontent.com/feiyangprojects/clash2sing-box/main/src/index.ts \
+           # Preform conversion
+           convert
            # Mergeable injection is optional
-           --merge-with ./src/tests/sing-box-mergeable.json \
+           --mergeable ./src/tests/sing-box-mergeable.json \
            # Set input and output configuration file
            ./src/tests/clash.yaml ./src/tests/sing-box.json
 $ ls ./src/tests/

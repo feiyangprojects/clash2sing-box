@@ -165,6 +165,7 @@ export const SingboxExperimental = z.object({
   clash_api: z.optional(z.object({
     external_controller: z.optional(z.string()),
     external_ui: z.optional(z.string()),
+    external_ui_download_url: z.optional(z.string()),
     secret: z.optional(z.string()),
   })),
 });

@@ -1,5 +1,4 @@
 import { deepmerge } from "deepmerge-ts";
-import * as yaml from "yaml";
 import { z } from "zod";
 import {
   Clash,
@@ -26,13 +25,37 @@ import {
   SingboxOutboundVLESS,
   SingboxOutboundVmess,
 } from "./types.ts";
-import { Args } from "flags";
+
+export type Options = {
+  mergeable?: {
+    value: object;
+  };
+  experimental?: {
+    cachefile?: {
+      enabled?: boolean;
+      path?: string;
+      cacheid?: string;
+    };
+    clashapi?: {
+      externalcontroller?: string;
+      externalui?: string;
+      externaluidownloadurl?: string;
+      secret?: string;
+    };
+  };
+  outbound?: {
+    selector?: {
+      default?: number;
+      tag?: string[];
+    };
+  };
+};
 
 export function convert(
-  input: string,
-  flags: Args,
+  input: object,
+  options: Options,
 ): string {
-  const clash: Clash = Clash.parse(yaml.parse(input));
+  const clash: Clash = Clash.parse(input);
 
   const singbox: Singbox = Singbox.parse({
     outbounds: [],
@@ -44,37 +67,39 @@ export function convert(
     tag: "selector",
     outbounds: [],
   };
-  if (flags["experimental-cachefile-enabled"] === true) {
+  if (options.experimental?.cachefile !== undefined) {
     singboxExperimental.cache_file = { enabled: true };
 
-    if (flags["experimental-cachefile-cacheid"] !== undefined) {
-      singboxExperimental.cache_file.cache_id =
-        flags["experimental-cachefile-cacheid"];
+    if (options.experimental.cachefile.path !== undefined) {
+      singboxExperimental.cache_file.path = options.experimental.cachefile.path;
     }
-    if (flags["experimental-cachefile-path"] !== undefined) {
-      singboxExperimental.cache_file.path =
-        flags["experimental-cachefile-path"];
+    if (options.experimental.cachefile.cacheid !== undefined) {
+      singboxExperimental.cache_file.cache_id =
+        options.experimental.cachefile.cacheid;
     }
   }
-  if (flags["experimental-clashapi-externalcontroller"] !== undefined) {
+  if (options.experimental?.clashapi !== undefined) {
     singboxExperimental.clash_api = {
-      external_controller: flags["experimental-clashapi-externalcontroller"],
+      external_controller: options.experimental.clashapi.externalcontroller,
     };
 
-    if (flags["experimental-clashapi-externalui"] !== undefined) {
+    if (options.experimental.clashapi.externalui !== undefined) {
       singboxExperimental.clash_api.external_ui =
-        flags["experimental-clashapi-externalui"];
+        options.experimental.clashapi.externalui;
     }
-    if (flags["experimental-clashapi-secret"] !== undefined) {
+
+    if (options.experimental.clashapi.externaluidownloadurl !== undefined) {
+      singboxExperimental.clash_api.external_ui_download_url =
+        options.experimental.clashapi.externaluidownloadurl;
+    }
+
+    if (options.experimental.clashapi.secret !== undefined) {
       singboxExperimental.clash_api.secret =
-        flags["experimental-clashapi-secret"];
+        options.experimental.clashapi.secret;
     }
   }
   if (Object.keys(singboxExperimental).length > 0) {
     singbox.experimental = SingboxExperimental.parse(singboxExperimental);
-  }
-  if (flags["outbound-selector-tag"] !== undefined) {
-    singboxOutboundSelector.tag = flags["outbound-selector-tag"];
   }
 
   for (const proxy of clash.proxies) {
@@ -132,28 +157,35 @@ export function convert(
     singboxOutboundSelector.outbounds.push(outbound.tag);
   }
 
-  if (flags["outbound-selector-default"] != undefined) {
-    const outbound = singbox.outbounds.at(
-      parseInt(flags["outbound-selector-default"]),
-    );
+  if (options.outbound?.selector?.default != undefined) {
+    const outbound = singbox.outbounds.at(options.outbound.selector.default);
     if (outbound != undefined) {
       singboxOutboundSelector.default = outbound!.tag;
     } else {
       throw new Error("Invalid outbound ordinal number");
     }
   }
-  singbox.outbounds.push(
-    SingboxOutboundSelector.parse(singboxOutboundSelector),
-  );
 
-  if (flags["merge-with"] !== undefined) {
+  if (options.outbound?.selector?.tag !== undefined) {
+    for (const tag of options.outbound.selector.tag) {
+      const selector = structuredClone(singboxOutboundSelector);
+      selector.tag = tag;
+      singbox.outbounds.push(SingboxOutboundSelector.parse(selector));
+    }
+  } else {
+    singbox.outbounds.push(
+      SingboxOutboundSelector.parse(singboxOutboundSelector),
+    );
+  }
+
+  if (options.mergeable !== undefined) {
     return JSON.stringify(
-      deepmerge(JSON.parse(flags["merge-with"]), singbox),
+      merge(options.mergeable.value, singbox),
       null,
-      4,
+      2,
     );
   } else {
-    return JSON.stringify(singbox, null, 4);
+    return JSON.stringify(singbox, null, 2);
   }
 }
 
@@ -530,3 +562,7 @@ const convertVLESS = z.function()
 
     return outbound;
   });
+
+export function merge(...objects: object[]): object {
+  return deepmerge(...objects) as object;
+}

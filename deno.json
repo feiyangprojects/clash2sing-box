@@ -1,3 +1,22 @@
 {
-  "importMap": "import_map.json"
+  "name": "@fei1yang/clash2sing-box",
+  "version": "0.1.0",
+  "exports": {
+    ".": "./src/mod.ts",
+    "./types": "./src/libs/types.ts",
+    "./utils": "./src/libs/utils.ts"
+  },
+  "imports": {
+    "@cliffy/command": "jsr:@cliffy/command@^1.0.0-rc.7",
+    "yaml": "jsr:@eemeli/yaml@^2.8.0",
+    "deepmerge-ts": "jsr:@rebeccastevens/deepmerge@^7.1.5",
+    "zod": "npm:zod@^3.25"
+  },
+  "publish": {
+    "exclude": [
+      "src/tests",
+      ".gitignore",
+      "README.md"
+    ]
+  }
 }
