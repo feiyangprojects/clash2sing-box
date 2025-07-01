@@ -1,4 +1,5 @@
 import { deepmerge } from "deepmerge-ts";
+import * as yaml from "yaml";
 import { z } from "zod";
 import {
   Clash,
@@ -52,10 +53,10 @@ export type Options = {
 };
 
 export function convert(
-  input: object,
+  input: string,
   options: Options,
 ): string {
-  const clash: Clash = Clash.parse(input);
+  const clash: Clash = Clash.parse(yaml.parse(input));
 
   const singbox: Singbox = Singbox.parse({
     outbounds: [],

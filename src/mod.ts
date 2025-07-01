@@ -1,5 +1,4 @@
 import { Command, ValidationError } from "@cliffy/command";
-import * as yaml from "yaml";
 
 import { convert, merge } from "./libs/utils.ts";
 
@@ -62,7 +61,7 @@ await new Command()
   .action((options, input, output) => {
     Deno.writeTextFileSync(
       output,
-      convert(yaml.parse(Deno.readTextFileSync(input)), options),
+      convert(Deno.readTextFileSync(input), options),
     );
   })
   .command("merge <input...:string>", "Merge multiple JSON files")
