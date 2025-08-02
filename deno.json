@@ -10,7 +10,7 @@
     "@cliffy/command": "jsr:@cliffy/command@^1.0.0-rc.7",
     "yaml": "jsr:@eemeli/yaml@^2.8.0",
     "deepmerge-ts": "jsr:@rebeccastevens/deepmerge@^7.1.5",
-    "zod": "npm:zod@^3.25"
+    "zod": "npm:zod@^4"
   },
   "publish": {
     "exclude": [

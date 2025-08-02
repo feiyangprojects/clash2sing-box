@@ -17,7 +17,7 @@ export const ClashProxyBaseVmessOrVLESS = ClashProxy.extend({
   network: z.optional(z.enum(["ws", "h2", "http", "grpc"])),
   "ws-opts": z.optional(z.object({
     path: z.optional(z.string()),
-    headers: z.optional(z.record(z.string())),
+    headers: z.optional(z.record(z.string(), z.string())),
     "max-early-data": z.optional(z.number()),
     "early-data-header-name": z.optional(z.string()),
     "v2ray-http-upgrade": z.optional(z.boolean()),
@@ -30,7 +30,7 @@ export const ClashProxyBaseVmessOrVLESS = ClashProxy.extend({
   "http-opts": z.optional(z.object({
     method: z.optional(z.string()),
     path: z.optional(z.array(z.string())),
-    headers: z.optional(z.record(z.array(z.string()))),
+    headers: z.optional(z.record(z.string(), z.array(z.string()))),
   })),
   "grpc-opts": z.optional(z.object({
     "grpc-service-name": z.optional(z.string()),
@@ -193,7 +193,7 @@ export const SingboxOutboundCommonVmessOrVLESSTransportCommonHttp = z.object({
   host: z.optional(z.array(z.string())),
   path: z.optional(z.string()),
   method: z.optional(z.string()),
-  headers: z.optional(z.record(z.string())),
+  headers: z.optional(z.record(z.string(), z.string())),
 });
 export const SingboxOutboundCommonVmessOrVLESSTransportHttp =
   SingboxOutboundCommonVmessOrVLESSTransportCommonHttp.extend({
@@ -309,7 +309,6 @@ export const SingboxOutboundVLESS = SingboxOutbound.extend({
 export const SingboxOutbounds = z.discriminatedUnion("type", [
   SingboxOutboundHttp,
   SingboxOutboundHysteria,
-  SingboxOutboundSelector,
   SingboxOutboundShadowsocks,
   SingboxOutboundSocks,
   SingboxOutboundTrojan,
@@ -319,7 +318,9 @@ export const SingboxOutbounds = z.discriminatedUnion("type", [
 ]);
 export const Singbox = z.object({
   experimental: z.optional(SingboxExperimental),
-  outbounds: z.array(SingboxOutbounds),
+  outbounds: z.array(
+    z.discriminatedUnion("type", [SingboxOutbounds, SingboxOutboundSelector]),
+  ),
 });
 
 export type SingboxExperimental = z.infer<typeof SingboxExperimental>;
