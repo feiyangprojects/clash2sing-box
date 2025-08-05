@@ -3,6 +3,7 @@ import * as yaml from "yaml";
 import { z } from "zod";
 import {
   Clash,
+  ClashProxyAnyTls,
   ClashProxyBaseTLS,
   ClashProxyBaseVmessOrVLESS,
   ClashProxyHttp,
@@ -15,6 +16,7 @@ import {
   ClashProxyVmess,
   Singbox,
   SingboxExperimental,
+  SingboxOutboundAnyTls,
   SingboxOutboundCommonTlsTransport,
   SingboxOutboundCommonVmessOrVLESSTransport,
   SingboxOutboundHttp,
@@ -112,6 +114,9 @@ export function convert(
     let outbound: SingboxOutbounds;
 
     switch (proxy.type) {
+      case "anytls":
+        outbound = doConvertAnyTls(proxy);
+        break;
       case "http":
         outbound = doConvertHttp(proxy);
         break;
@@ -316,6 +321,34 @@ const doConvertVmessOrVLESSTransport = convertVmessOrVLESSTransport.implement(
     throw new Error("Unsupported transport tcp");
   },
 );
+
+const convertAnyTls = z.function({
+  input: [ClashProxyAnyTls],
+  output: SingboxOutboundAnyTls,
+});
+const doConvertAnyTls = convertAnyTls.implement((proxy) => {
+  const outbound: SingboxOutboundAnyTls = {
+    type: "anytls",
+    tag: proxy.name,
+    server: proxy.server,
+    server_port: proxy.port,
+    password: proxy.password,
+    tls: doConvertTLSTransport(proxy)!,
+  };
+
+  if (proxy["idle-session-check-interval"] !== undefined) {
+    outbound.idle_session_check_interval =
+      `${proxy["idle-session-check-interval"]!}s`;
+  }
+  if (proxy["idle-session-timeout"] !== undefined) {
+    outbound.idle_session_timeout = `${proxy["idle-session-timeout"]!}s`;
+  }
+  if (proxy["min-idle-session"] !== undefined) {
+    outbound.min_idle_session = proxy["min-idle-session"]!;
+  }
+
+  return outbound;
+});
 
 const convertHttp = z.function({
   input: [ClashProxyHttp],

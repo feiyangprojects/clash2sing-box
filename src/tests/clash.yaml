@@ -727,6 +727,22 @@ proxies: # socks5
 #    # protocol-param: "#"
 #    # udp: true
 
+  - name: anytls
+    type: anytls
+    server: 1.2.3.4
+    port: 443
+    password: "<your password>"
+    # client-fingerprint: chrome
+    udp: true
+    # idle-session-check-interval: 30 # seconds
+    # idle-session-timeout: 30 # seconds
+    # min-idle-session: 0
+    # sni: "example.com"
+    # alpn:
+    #   - h2
+    #   - http/1.1
+    # skip-cert-verify: true
+
 proxy-groups: # 代理链，若落地协议支持 UDP over TCP 则可支持 UDP
   # Traffic: clash <-> http <-> vmess <-> ss1 <-> ss2 <-> Internet
   - name: "relay"

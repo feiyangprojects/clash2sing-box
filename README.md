@@ -8,6 +8,7 @@
 
 |Name|Status|Note|
 |---|---|---|
+|AnyTLS|O||
 |HTTP|O|sing-box limitation: layer tls not supported|
 |Hysteria|O|sing-box limitation: protocol faketcp or wechat-video not supported|
 |Shadowsocks|O||

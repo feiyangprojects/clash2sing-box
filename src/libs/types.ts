@@ -47,6 +47,13 @@ export const ClashProxyBaseVmessOrVLESS = ClashProxyBaseTLS.extend({
     "grpc-service-name": z.optional(z.string()),
   })),
 });
+export const ClashProxyAnyTls = ClashProxyBaseTLS.extend({
+  type: z.literal("anytls"),
+  password: z.string(),
+  "idle-session-check-interval": z.optional(z.number()),
+  "idle-session-timeout": z.optional(z.number()),
+  "min-idle-session": z.optional(z.number()),
+});
 export const ClashProxyHttp = ClashProxyBaseTLS.extend({
   type: z.literal("http"),
   username: z.optional(z.string()),
@@ -124,6 +131,7 @@ export const ClashProxyVLESS = ClashProxyBaseVmessOrVLESS.extend({
   flow: z.optional(z.enum(["xtls-rprx-vision"])),
 });
 export const ClashProxies = z.discriminatedUnion("type", [
+  ClashProxyAnyTls,
   ClashProxyHttp,
   ClashProxyHysteria,
   ClashProxyShadowsocks,
@@ -142,6 +150,7 @@ export type ClashProxyBaseTLS = z.infer<typeof ClashProxyBaseTLS>;
 export type ClashProxyBaseVmessOrVLESS = z.infer<
   typeof ClashProxyBaseVmessOrVLESS
 >;
+export type ClashProxyAnyTls = z.infer<typeof ClashProxyAnyTls>;
 export type ClashProxyHttp = z.infer<typeof ClashProxyHttp>;
 export type ClashProxyHysteria = z.infer<typeof ClashProxyHysteria>;
 export type ClashProxyShadowsocks = z.infer<typeof ClashProxyShadowsocks>;
@@ -222,6 +231,14 @@ export const SingboxOutbound = z.object({
 });
 export const SingboxOutboundBaseTLS = SingboxOutbound.extend({
   tls: z.optional(SingboxOutboundCommonTlsTransport),
+});
+export const SingboxOutboundAnyTls = SingboxOutboundBaseTLS.extend({
+  type: z.literal("anytls"),
+  password: z.string(),
+  idle_session_check_interval: z.optional(z.string()),
+  idle_session_timeout: z.optional(z.string()),
+  min_idle_session: z.optional(z.number()),
+  tls: SingboxOutboundCommonTlsTransport,
 });
 export const SingboxOutboundHttp = SingboxOutboundBaseTLS.extend({
   type: z.literal("http"),
@@ -308,6 +325,7 @@ export const SingboxOutboundVLESS = SingboxOutboundBaseTLS.extend({
   transport: SingboxOutboundCommonVmessOrVLESSTransport,
 });
 export const SingboxOutbounds = z.discriminatedUnion("type", [
+  SingboxOutboundAnyTls,
   SingboxOutboundHttp,
   SingboxOutboundHysteria,
   SingboxOutboundShadowsocks,
@@ -325,7 +343,9 @@ export const Singbox = z.object({
 });
 
 export type SingboxExperimental = z.infer<typeof SingboxExperimental>;
-export type SingboxOutboundCommonDomainResolver = z.infer<typeof SingboxOutboundCommonDomainResolver>;
+export type SingboxOutboundCommonDomainResolver = z.infer<
+  typeof SingboxOutboundCommonDomainResolver
+>;
 export type SingboxOutboundCommonTlsTransport = z.infer<
   typeof SingboxOutboundCommonTlsTransport
 >;
@@ -346,6 +366,7 @@ export type SingboxOutboundCommonVmessOrVLESSTransport = z.infer<
 >;
 export type SingboxOutbound = z.infer<typeof SingboxOutbound>;
 export type SingboxOutboundBaseTLS = z.infer<typeof SingboxOutboundBaseTLS>;
+export type SingboxOutboundAnyTls = z.infer<typeof SingboxOutboundAnyTls>;
 export type SingboxOutboundHttp = z.infer<typeof SingboxOutboundHttp>;
 export type SingboxOutboundHysteria = z.infer<typeof SingboxOutboundHysteria>;
 export type SingboxOutboundSelector = z.infer<typeof SingboxOutboundSelector>;
