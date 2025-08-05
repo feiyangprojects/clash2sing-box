@@ -3,6 +3,7 @@ import * as yaml from "yaml";
 import { z } from "zod";
 import {
   Clash,
+  ClashProxyBaseTLS,
   ClashProxyBaseVmessOrVLESS,
   ClashProxyHttp,
   ClashProxyHysteria,
@@ -14,6 +15,7 @@ import {
   ClashProxyVmess,
   Singbox,
   SingboxExperimental,
+  SingboxOutboundCommonTlsTransport,
   SingboxOutboundCommonVmessOrVLESSTransport,
   SingboxOutboundHttp,
   SingboxOutboundHysteria,
@@ -190,6 +192,33 @@ export function convert(
   }
 }
 
+const convertTLSTransport = z.function({
+  input: [ClashProxyBaseTLS],
+  output: z.optional(SingboxOutboundCommonTlsTransport),
+});
+const doConvertTLSTransport = convertTLSTransport.implement(
+  (proxy) => {
+    const tls: SingboxOutboundCommonTlsTransport = { enabled: true };
+    if (proxy.alpn !== undefined) {
+      tls.alpn = proxy.alpn!;
+    }
+    if (proxy.servername !== undefined) {
+      tls.server_name = proxy.servername!;
+    }
+    if (proxy.sni !== undefined) {
+      tls.server_name = proxy.sni!;
+    }
+    if (
+      proxy["skip-cert-verify"] !== undefined &&
+      proxy["skip-cert-verify"] === true
+    ) {
+      tls.insecure = true;
+    }
+
+    return tls;
+  },
+);
+
 const convertVmessOrVLESSTransport = z.function({
   input: [ClashProxyBaseVmessOrVLESS],
   output: SingboxOutboundCommonVmessOrVLESSTransport,
@@ -291,17 +320,8 @@ const doConvertHttp = convertHttp.implement((proxy) => {
       outbound.password = proxy.password!;
     }
   }
-  if (proxy.tls !== undefined && proxy.tls === true) {
-    outbound.tls = { enabled: true };
-    if (
-      proxy["skip-cert-verify"] !== undefined &&
-      proxy["skip-cert-verify"] === true
-    ) {
-      outbound.tls.insecure = true;
-    }
-    if (proxy.sni !== undefined) {
-      outbound.tls.server_name = proxy.sni!;
-    }
+  if (proxy.tls !== undefined) {
+    outbound.tls = doConvertTLSTransport(proxy);
   }
 
   return outbound;
@@ -319,25 +339,11 @@ const doConvertHysteria = convertHysteria.implement((proxy) => {
     server_port: proxy.port,
     up: proxy.up,
     down: proxy.down,
-    tls: { enabled: true },
+    tls: doConvertTLSTransport(proxy)!,
   };
 
   if (proxy.protocol !== undefined && proxy.protocol !== "udp") {
     throw new Error("Unsupported protocol faketcp or wechat-video");
-  }
-  if (proxy.sni !== undefined) {
-    outbound.tls.server_name = proxy.sni!;
-  } else {
-    outbound.tls.server_name = proxy.server;
-  }
-  if (proxy.alpn !== undefined) {
-    outbound.tls.alpn = proxy.alpn!;
-  }
-  if (
-    proxy["skip-cert-verify"] !== undefined &&
-    proxy["skip-cert-verify"] === true
-  ) {
-    outbound.tls.insecure = true;
   }
   if (proxy.obfs !== undefined) {
     outbound.obfs = proxy.obfs!;
@@ -440,21 +446,8 @@ const doConvertTrojan = convertTrojan.implement((proxy) => {
     server: proxy.server,
     server_port: proxy.port,
     password: proxy.password,
-    tls: { enabled: true },
+    tls: doConvertTLSTransport(proxy),
   };
-
-  if (proxy.sni !== undefined) {
-    outbound.tls!.server_name = proxy.sni!;
-  }
-  if (
-    proxy["skip-cert-verify"] !== undefined &&
-    proxy["skip-cert-verify"] === true
-  ) {
-    outbound.tls!.insecure = true;
-  }
-  if (proxy.alpn !== undefined) {
-    outbound.tls!.alpn = proxy.alpn!;
-  }
 
   return outbound;
 });
@@ -470,7 +463,7 @@ const doConvertTUIC = convertTUIC.implement((proxy) => {
     server: proxy.server,
     server_port: proxy.port,
     uuid: proxy.uuid,
-    tls: { enabled: true },
+    tls: doConvertTLSTransport(proxy)!,
   };
 
   if (proxy.password !== undefined) {
@@ -494,18 +487,6 @@ const doConvertTUIC = convertTUIC.implement((proxy) => {
   ) {
     outbound.udp_over_stream = true;
   }
-  if (proxy.sni !== undefined) {
-    outbound.tls!.server_name = proxy.sni!;
-  }
-  if (
-    proxy["skip-cert-verify"] !== undefined &&
-    proxy["skip-cert-verify"] === true
-  ) {
-    outbound.tls!.insecure = true;
-  }
-  if (proxy.alpn !== undefined) {
-    outbound.tls!.alpn = proxy.alpn!;
-  }
 
   return outbound;
 });
@@ -527,18 +508,10 @@ const doConvertVmess = convertVmess.implement((proxy) => {
     transport: doConvertVmessOrVLESSTransport(proxy),
   };
 
-  if (proxy.tls !== undefined && proxy.tls === true) {
-    outbound.tls = { enabled: true };
-    if (proxy.servername !== undefined) {
-      outbound.tls.server_name = proxy.servername!;
-    }
-    if (
-      proxy["skip-cert-verify"] !== undefined &&
-      proxy["skip-cert-verify"] === true
-    ) {
-      outbound.tls.insecure = true;
-    }
+  if (proxy.tls !== undefined) {
+    outbound.tls = doConvertTLSTransport(proxy);
   }
+
   return outbound;
 });
 
@@ -560,17 +533,8 @@ const doConvertVLESS = convertVLESS.implement((proxy) => {
   if (proxy.flow !== undefined) {
     outbound.flow = proxy.flow;
   }
-  if (proxy.tls !== undefined && proxy.tls === true) {
-    outbound.tls = { enabled: true };
-    if (proxy.servername !== undefined) {
-      outbound.tls.server_name = proxy.servername!;
-    }
-    if (
-      proxy["skip-cert-verify"] !== undefined &&
-      proxy["skip-cert-verify"] === true
-    ) {
-      outbound.tls.insecure = true;
-    }
+  if (proxy.tls !== undefined) {
+    outbound.tls = doConvertTLSTransport(proxy);
   }
 
   return outbound;

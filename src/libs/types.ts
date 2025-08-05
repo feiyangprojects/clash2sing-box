@@ -9,11 +9,21 @@ export const ClashProxy = z.object({
     z.enum(["dual", "ipv4", "ipv6", "ipv4-prefer", "ipv6-prefer"]),
   ),
 });
-export const ClashProxyBaseVmessOrVLESS = ClashProxy.extend({
-  uuid: z.string(),
-  tls: z.optional(z.boolean()),
+export const ClashProxyBaseTLS = ClashProxy.extend({
+  tls: z.optional(z.boolean()).meta({
+    description:
+      "Only exists on the following optionally tls-enabled proxies: http, socks, v2ray protocols",
+  }),
   "skip-cert-verify": z.optional(z.boolean()),
-  servername: z.optional(z.string()),
+  alpn: z.optional(z.array(z.string())),
+  servername: z.optional(z.string()).meta({
+    deprecated: true,
+    description: "Only used by v2ray protocols",
+  }),
+  sni: z.optional(z.string()),
+});
+export const ClashProxyBaseVmessOrVLESS = ClashProxyBaseTLS.extend({
+  uuid: z.string(),
   network: z.optional(z.enum(["ws", "h2", "http", "grpc"])),
   "ws-opts": z.optional(z.object({
     path: z.optional(z.string()),
@@ -36,32 +46,23 @@ export const ClashProxyBaseVmessOrVLESS = ClashProxy.extend({
     "grpc-service-name": z.optional(z.string()),
   })),
 });
-export const ClashProxyHttp = ClashProxy.extend({
+export const ClashProxyHttp = ClashProxyBaseTLS.extend({
   type: z.literal("http"),
   username: z.optional(z.string()),
   password: z.optional(z.string()),
-  tls: z.optional(z.boolean()),
-  "skip-cert-verify": z.optional(z.boolean()),
-  sni: z.optional(z.string()),
 });
-export const ClashProxyHysteria = ClashProxy.extend({
+export const ClashProxyHysteria = ClashProxyBaseTLS.extend({
   type: z.literal("hysteria"),
   "auth-str": z.optional(z.string()),
   obfs: z.optional(z.string()),
-  alpn: z.optional(z.array(z.string())),
   protocol: z.enum(["udp", "wechat-video", "faketcp"]),
   up: z.string(),
   down: z.string(),
-  sni: z.optional(z.string()),
-  tls: z.optional(z.boolean()),
-  "skip-cert-verify": z.optional(z.boolean()),
 });
-export const ClashProxySocks5 = ClashProxy.extend({
+export const ClashProxySocks5 = ClashProxyBaseTLS.extend({
   type: z.literal("socks5"),
   username: z.optional(z.string()),
   password: z.optional(z.string()),
-  tls: z.optional(z.boolean()),
-  "skip-cert-verify": z.optional(z.boolean()),
 });
 export const ClashProxyShadowsocks = ClashProxy.extend({
   type: z.literal("ss"),
@@ -97,24 +98,18 @@ export const ClashProxyShadowsocks = ClashProxy.extend({
   "udp-over-tcp": z.optional(z.boolean()),
   "udp-over-tcp-version": z.optional(z.union([z.literal(1), z.literal(2)])),
 });
-export const ClashProxyTrojan = ClashProxy.extend({
+export const ClashProxyTrojan = ClashProxyBaseTLS.extend({
   type: z.literal("trojan"),
   password: z.string(),
-  sni: z.optional(z.string()),
-  alpn: z.optional(z.array(z.string())),
-  "skip-cert-verify": z.optional(z.boolean()),
 });
-export const ClashProxyTUIC = ClashProxy.extend({
+export const ClashProxyTUIC = ClashProxyBaseTLS.extend({
   type: z.literal("tuic"),
   uuid: z.string(),
   password: z.optional(z.string()),
-  alpn: z.optional(z.array(z.string())),
   "heartbeat-interval": z.optional(z.number()),
   "reduce-rtt": z.optional(z.boolean()),
   "udp-relay-mode": z.optional(z.enum(["native", "quic"])),
   "congestion-controller": z.optional(z.enum(["cubic", "new_reno", "bbr"])),
-  "skip-cert-verify": z.optional(z.boolean()),
-  sni: z.optional(z.string()),
   "udp-over-stream": z.optional(z.boolean()),
 });
 export const ClashProxyVmess = ClashProxyBaseVmessOrVLESS.extend({
@@ -142,6 +137,7 @@ export const Clash = z.object({
 });
 
 export type ClashProxy = z.infer<typeof ClashProxy>;
+export type ClashProxyBaseTLS = z.infer<typeof ClashProxyBaseTLS>;
 export type ClashProxyBaseVmessOrVLESS = z.infer<
   typeof ClashProxyBaseVmessOrVLESS
 >;
@@ -178,12 +174,13 @@ export const SingboxOutbound = z.object({
     z.enum(["prefer_ipv4", "prefer_ipv6", "ipv4_only", "ipv6_only"]),
   ),
 });
-export const SingboxOutboundCommonTls = z.object({
+export const SingboxOutboundCommonTlsTransport = z.object({
   enabled: z.boolean(),
   disable_sni: z.optional(z.boolean()),
   server_name: z.optional(z.string()),
   insecure: z.optional(z.boolean()),
   alpn: z.optional(z.array(z.string())),
+  certificate: z.optional(z.array(z.string())),
 });
 export const SingboxOutboundCommonVmessOrVLESSTransportGrpc = z.object({
   type: z.literal("grpc"),
@@ -218,19 +215,22 @@ export const SingboxOutboundCommonVmessOrVLESSTransport = z.discriminatedUnion(
     SingboxOutboundCommonVmessOrVLESSTransportWebSocket,
   ],
 );
-export const SingboxOutboundHttp = SingboxOutbound.extend({
+
+export const SingboxOutboundBaseTLS = SingboxOutbound.extend({
+  tls: z.optional(SingboxOutboundCommonTlsTransport),
+});
+export const SingboxOutboundHttp = SingboxOutboundBaseTLS.extend({
   type: z.literal("http"),
   username: z.optional(z.string()),
   password: z.optional(z.string()),
-  tls: z.optional(SingboxOutboundCommonTls),
 });
-export const SingboxOutboundHysteria = SingboxOutbound.extend({
+export const SingboxOutboundHysteria = SingboxOutboundBaseTLS.extend({
   type: z.literal("hysteria"),
   up: z.string(),
   down: z.string(),
   obfs: z.optional(z.string()),
   auth_str: z.optional(z.string()),
-  tls: SingboxOutboundCommonTls,
+  tls: SingboxOutboundCommonTlsTransport,
 });
 export const SingboxOutboundSelector = z.object({
   type: z.literal("selector"),
@@ -273,10 +273,9 @@ export const SingboxOutboundSocks = SingboxOutbound.extend({
   username: z.optional(z.string()),
   password: z.optional(z.string()),
 });
-export const SingboxOutboundTrojan = SingboxOutbound.extend({
+export const SingboxOutboundTrojan = SingboxOutboundBaseTLS.extend({
   type: z.literal("trojan"),
   password: z.string(),
-  tls: SingboxOutboundCommonTls,
 });
 export const SingboxOutboundTUIC = SingboxOutbound.extend({
   type: z.literal("tuic"),
@@ -287,23 +286,21 @@ export const SingboxOutboundTUIC = SingboxOutbound.extend({
   udp_over_stream: z.optional(z.boolean()),
   zero_rtt_handshake: z.optional(z.boolean()),
   heartbeat: z.optional(z.string()),
-  tls: SingboxOutboundCommonTls,
+  tls: SingboxOutboundCommonTlsTransport,
 });
-export const SingboxOutboundVmess = SingboxOutbound.extend({
+export const SingboxOutboundVmess = SingboxOutboundBaseTLS.extend({
   type: z.literal("vmess"),
   uuid: z.string(),
   security: z.optional(
     z.enum(["auto", "none", "zero", "aes-128-gcm", "chacha20-poly1305"]),
   ),
   alter_id: z.optional(z.number()),
-  tls: z.optional(SingboxOutboundCommonTls),
   transport: SingboxOutboundCommonVmessOrVLESSTransport,
 });
-export const SingboxOutboundVLESS = SingboxOutbound.extend({
+export const SingboxOutboundVLESS = SingboxOutboundBaseTLS.extend({
   type: z.literal("vless"),
   uuid: z.string(),
   flow: z.optional(z.enum(["xtls-rprx-vision"])),
-  tls: z.optional(SingboxOutboundCommonTls),
   transport: SingboxOutboundCommonVmessOrVLESSTransport,
 });
 export const SingboxOutbounds = z.discriminatedUnion("type", [
@@ -325,8 +322,8 @@ export const Singbox = z.object({
 
 export type SingboxExperimental = z.infer<typeof SingboxExperimental>;
 export type SingboxOutbound = z.infer<typeof SingboxOutbound>;
-export type SingboxOutboundCommonTls = z.infer<
-  typeof SingboxOutboundCommonTls
+export type SingboxOutboundCommonTlsTransport = z.infer<
+  typeof SingboxOutboundCommonTlsTransport
 >;
 export type SingboxOutboundCommonVmessOrVLESSTransportGrpc = z.infer<
   typeof SingboxOutboundCommonVmessOrVLESSTransportGrpc
@@ -343,6 +340,7 @@ export type SingboxOutboundCommonVmessOrVLESSTransportWebSocket = z.infer<
 export type SingboxOutboundCommonVmessOrVLESSTransport = z.infer<
   typeof SingboxOutboundCommonVmessOrVLESSTransport
 >;
+export type SingboxOutboundBaseTLS = z.infer<typeof SingboxOutboundBaseTLS>;
 export type SingboxOutboundHttp = z.infer<typeof SingboxOutboundHttp>;
 export type SingboxOutboundHysteria = z.infer<typeof SingboxOutboundHysteria>;
 export type SingboxOutboundSelector = z.infer<typeof SingboxOutboundSelector>;
