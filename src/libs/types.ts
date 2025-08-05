@@ -21,6 +21,7 @@ export const ClashProxyBaseTLS = ClashProxy.extend({
     description: "Only used by v2ray protocols",
   }),
   sni: z.optional(z.string()),
+  "x-clash2singbox-certificate": z.optional(z.array(z.string())),
 });
 export const ClashProxyBaseVmessOrVLESS = ClashProxyBaseTLS.extend({
   uuid: z.string(),

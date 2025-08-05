@@ -214,6 +214,9 @@ const doConvertTLSTransport = convertTLSTransport.implement(
     ) {
       tls.insecure = true;
     }
+    if (proxy["x-clash2singbox-certificate"] !== undefined) {
+      tls.certificate = proxy["x-clash2singbox-certificate"]!;
+    }
 
     return tls;
   },
