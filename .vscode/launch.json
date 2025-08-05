@@ -11,7 +11,7 @@
       "program": "${workspaceFolder}/src/mod.ts",
       "args": [
         "convert",
-                "./src/tests/clash.yaml",
+        "./src/tests/clash.yaml",
         "./src/tests/sing-box.json",
         "--experimental.cachefile.enabled",
         "true",
@@ -25,6 +25,8 @@
         "ui",
         "--experimental.clashapi.secret",
         "123456789",
+        "--outbound.domainresolver.tag",
+        "bootstrap",
         "--outbound.selector.default",
         "0",
         "--outbound.selector.tag",

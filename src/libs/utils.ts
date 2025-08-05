@@ -47,6 +47,9 @@ export type Options = {
     };
   };
   outbound?: {
+    domainresolver?: {
+      tag?: string;
+    };
     selector?: {
       default?: number;
       tag?: string[];
@@ -140,19 +143,28 @@ export function convert(
     }
 
     if (proxy["ip-version"] !== undefined) {
-      switch (proxy["ip-version"]) {
-        case "ipv6-prefer":
-          outbound.domain_strategy = "prefer_ipv6";
-          break;
-        case "ipv4-prefer":
-          outbound.domain_strategy = "prefer_ipv4";
-          break;
-        case "ipv6":
-          outbound.domain_strategy = "ipv6_only";
-          break;
-        case "ipv4":
-          outbound.domain_strategy = "ipv4_only";
-          break;
+      if (options.outbound?.domainresolver?.tag !== undefined) {
+        outbound.domain_resolver = {
+          server: options.outbound?.domainresolver?.tag,
+        };
+        switch (proxy["ip-version"]) {
+          case "ipv6-prefer":
+            outbound.domain_resolver.strategy = "prefer_ipv6";
+            break;
+          case "ipv4-prefer":
+            outbound.domain_resolver.strategy = "prefer_ipv4";
+            break;
+          case "ipv6":
+            outbound.domain_resolver.strategy = "ipv6_only";
+            break;
+          case "ipv4":
+            outbound.domain_resolver.strategy = "ipv4_only";
+            break;
+        }
+      } else {
+        throw new Error(
+          "Domain resolver tag required for setting resolver strategy",
+        );
       }
     }
 

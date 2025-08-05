@@ -166,12 +166,9 @@ export const SingboxExperimental = z.object({
     secret: z.optional(z.string()),
   })),
 });
-export const SingboxOutbound = z.object({
-  tag: z.string(),
+export const SingboxOutboundCommonDomainResolver = z.object({
   server: z.string(),
-  server_port: z.number(),
-  network: z.optional(z.enum(["tcp", "udp", "tcp,udp"])),
-  domain_strategy: z.optional(
+  strategy: z.optional(
     z.enum(["prefer_ipv4", "prefer_ipv6", "ipv4_only", "ipv6_only"]),
   ),
 });
@@ -216,7 +213,13 @@ export const SingboxOutboundCommonVmessOrVLESSTransport = z.discriminatedUnion(
     SingboxOutboundCommonVmessOrVLESSTransportWebSocket,
   ],
 );
-
+export const SingboxOutbound = z.object({
+  tag: z.string(),
+  server: z.string(),
+  server_port: z.number(),
+  network: z.optional(z.enum(["tcp", "udp", "tcp,udp"])),
+  domain_resolver: z.optional(SingboxOutboundCommonDomainResolver),
+});
 export const SingboxOutboundBaseTLS = SingboxOutbound.extend({
   tls: z.optional(SingboxOutboundCommonTlsTransport),
 });
@@ -322,7 +325,7 @@ export const Singbox = z.object({
 });
 
 export type SingboxExperimental = z.infer<typeof SingboxExperimental>;
-export type SingboxOutbound = z.infer<typeof SingboxOutbound>;
+export type SingboxOutboundCommonDomainResolver = z.infer<typeof SingboxOutboundCommonDomainResolver>;
 export type SingboxOutboundCommonTlsTransport = z.infer<
   typeof SingboxOutboundCommonTlsTransport
 >;
@@ -341,6 +344,7 @@ export type SingboxOutboundCommonVmessOrVLESSTransportWebSocket = z.infer<
 export type SingboxOutboundCommonVmessOrVLESSTransport = z.infer<
   typeof SingboxOutboundCommonVmessOrVLESSTransport
 >;
+export type SingboxOutbound = z.infer<typeof SingboxOutbound>;
 export type SingboxOutboundBaseTLS = z.infer<typeof SingboxOutboundBaseTLS>;
 export type SingboxOutboundHttp = z.infer<typeof SingboxOutboundHttp>;
 export type SingboxOutboundHysteria = z.infer<typeof SingboxOutboundHysteria>;

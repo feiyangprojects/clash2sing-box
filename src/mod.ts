@@ -40,6 +40,10 @@ await new Command()
     { depends: ["experimental.clashapi.externalcontroller"] },
   )
   .option(
+    "--outbound.domainresolver.tag <string:string>",
+    "The name of the domain resolver, required for setting resolver strategy",
+  )
+  .option(
     "--outbound.selector.default <integer:integer>",
     "Use the n-th outbound as the default in the selector outbound",
   )
