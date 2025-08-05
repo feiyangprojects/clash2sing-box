@@ -23,6 +23,7 @@
 |---|---|---|
 |TCP-only|O||
 |IP Version|?|Only option `ip-version` is implemented|
+|TLS Certificate Pinning|?|Implemented via propertiary option `x-clash2singbox-certificate`|
 
 ## Usage
 
