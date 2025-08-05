@@ -143,7 +143,7 @@ export function convert(
         break;
     }
 
-    if (proxy.udp !== undefined && proxy.udp! === false) {
+    if (proxy.udp === false) {
       outbound.network = "tcp";
     }
 
@@ -180,7 +180,7 @@ export function convert(
   if (options.outbound?.selector?.default != undefined) {
     const outbound = singbox.outbounds.at(options.outbound.selector.default);
     if (outbound != undefined) {
-      singboxOutboundSelector.default = outbound!.tag;
+      singboxOutboundSelector.default = outbound.tag;
     } else {
       throw new Error("Invalid outbound ordinal number");
     }
@@ -217,22 +217,19 @@ const doConvertTLSTransport = convertTLSTransport.implement(
   (proxy) => {
     const tls: SingboxOutboundCommonTlsTransport = { enabled: true };
     if (proxy.alpn !== undefined) {
-      tls.alpn = proxy.alpn!;
+      tls.alpn = proxy.alpn;
     }
     if (proxy.servername !== undefined) {
-      tls.server_name = proxy.servername!;
+      tls.server_name = proxy.servername;
     }
     if (proxy.sni !== undefined) {
-      tls.server_name = proxy.sni!;
+      tls.server_name = proxy.sni;
     }
-    if (
-      proxy["skip-cert-verify"] !== undefined &&
-      proxy["skip-cert-verify"] === true
-    ) {
+    if (proxy["skip-cert-verify"] === true) {
       tls.insecure = true;
     }
     if (proxy["x-clash2singbox-certificate"] !== undefined) {
-      tls.certificate = proxy["x-clash2singbox-certificate"]!;
+      tls.certificate = proxy["x-clash2singbox-certificate"];
     }
 
     return tls;
@@ -250,15 +247,15 @@ const doConvertVmessOrVLESSTransport = convertVmessOrVLESSTransport.implement(
         "type": "http",
       };
       if (proxy["http-opts"].path !== undefined) {
-        transport.path = proxy["http-opts"].path[0]!;
+        transport.path = proxy["http-opts"].path[0];
       }
       if (proxy["http-opts"].method !== undefined) {
-        transport.method = proxy["http-opts"].method!;
+        transport.method = proxy["http-opts"].method;
       }
       if (proxy["http-opts"].headers !== undefined) {
         transport.headers = {};
         for (
-          const [key, value] of Object.entries(proxy["http-opts"].headers!)
+          const [key, value] of Object.entries(proxy["http-opts"].headers)
         ) {
           transport.headers[key] = value[0];
         }
@@ -269,21 +266,20 @@ const doConvertVmessOrVLESSTransport = convertVmessOrVLESSTransport.implement(
         "type": "http",
       };
       if (proxy["h2-opts"].host !== undefined) {
-        transport.host = proxy["h2-opts"].host!;
+        transport.host = proxy["h2-opts"].host;
       }
       if (proxy["h2-opts"].path !== undefined) {
-        transport.path = proxy["h2-opts"].path!;
+        transport.path = proxy["h2-opts"].path;
       }
       return transport;
     } else if (
       proxy["ws-opts"] !== undefined &&
-      proxy["ws-opts"]["v2ray-http-upgrade"] === true
-    ) {
+      proxy["ws-opts"]["v2ray-http-upgrade"] === true) {
       const transport: SingboxOutboundCommonVmessOrVLESSTransport = {
         "type": "httpupgrade",
       };
       if (proxy["ws-opts"].path !== undefined) {
-        transport.path = proxy["ws-opts"].path!;
+        transport.path = proxy["ws-opts"].path;
       }
       if (proxy["ws-opts"].headers !== undefined) {
         transport.headers = proxy["ws-opts"].headers;
@@ -295,17 +291,17 @@ const doConvertVmessOrVLESSTransport = convertVmessOrVLESSTransport.implement(
       };
 
       if (proxy["ws-opts"].path !== undefined) {
-        transport.path = proxy["ws-opts"].path!;
+        transport.path = proxy["ws-opts"].path;
       }
       if (proxy["ws-opts"].headers !== undefined) {
         transport.headers = proxy["ws-opts"].headers;
       }
       if (proxy["ws-opts"]["max-early-data"] !== undefined) {
-        transport.max_early_data = proxy["ws-opts"]["max-early-data"]!;
+        transport.max_early_data = proxy["ws-opts"]["max-early-data"];
       }
       if (proxy["ws-opts"]["early-data-header-name"] !== undefined) {
         transport.early_data_header_name =
-          proxy["ws-opts"]["early-data-header-name"]!;
+          proxy["ws-opts"]["early-data-header-name"];
       }
       return transport;
     } else if (proxy["grpc-opts"] !== undefined) {
@@ -313,7 +309,7 @@ const doConvertVmessOrVLESSTransport = convertVmessOrVLESSTransport.implement(
         "type": "grpc",
       };
       if (proxy["grpc-opts"]["grpc-service-name"] !== undefined) {
-        transport.service_name = proxy["grpc-opts"]["grpc-service-name"]!;
+        transport.service_name = proxy["grpc-opts"]["grpc-service-name"];
       }
       return transport;
     }
@@ -333,18 +329,18 @@ const doConvertAnyTls = convertAnyTls.implement((proxy) => {
     server: proxy.server,
     server_port: proxy.port,
     password: proxy.password,
-    tls: doConvertTLSTransport(proxy)!,
+    tls: doConvertTLSTransport(proxy),
   };
 
   if (proxy["idle-session-check-interval"] !== undefined) {
     outbound.idle_session_check_interval =
-      `${proxy["idle-session-check-interval"]!}s`;
+      `${proxy["idle-session-check-interval"]}s`;
   }
   if (proxy["idle-session-timeout"] !== undefined) {
-    outbound.idle_session_timeout = `${proxy["idle-session-timeout"]!}s`;
+    outbound.idle_session_timeout = `${proxy["idle-session-timeout"]}s`;
   }
   if (proxy["min-idle-session"] !== undefined) {
-    outbound.min_idle_session = proxy["min-idle-session"]!;
+    outbound.min_idle_session = proxy["min-idle-session"];
   }
 
   return outbound;
@@ -363,9 +359,9 @@ const doConvertHttp = convertHttp.implement((proxy) => {
   };
 
   if (proxy.username !== undefined) {
-    outbound.username = proxy.username!;
+    outbound.username = proxy.username;
     if (proxy.password !== undefined) {
-      outbound.password = proxy.password!;
+      outbound.password = proxy.password;
     }
   }
   if (proxy.tls !== undefined) {
@@ -387,17 +383,17 @@ const doConvertHysteria = convertHysteria.implement((proxy) => {
     server_port: proxy.port,
     up: proxy.up,
     down: proxy.down,
-    tls: doConvertTLSTransport(proxy)!,
+    tls: doConvertTLSTransport(proxy),
   };
 
-  if (proxy.protocol !== undefined && proxy.protocol !== "udp") {
+  if (proxy.protocol !== "udp") {
     throw new Error("Unsupported protocol faketcp or wechat-video");
   }
   if (proxy.obfs !== undefined) {
-    outbound.obfs = proxy.obfs!;
+    outbound.obfs = proxy.obfs;
   }
   if (proxy["auth-str"] !== undefined) {
-    outbound.auth_str = proxy["auth-str"]!;
+    outbound.auth_str = proxy["auth-str"];
   }
 
   return outbound;
@@ -421,34 +417,29 @@ const doConvertShadowsocks = convertShadowsocks.implement((proxy) => {
     if (proxy.plugin === "obfs") {
       outbound.plugin = "obfs-local";
     } else {
-      outbound.plugin = proxy.plugin!;
+      outbound.plugin = proxy.plugin;
     }
     outbound.plugin_opts = "";
     if (proxy["plugin-opts"] !== undefined) {
-      outbound.plugin_opts += `mode=${proxy["plugin-opts"].mode!}`;
+      outbound.plugin_opts += `mode=${proxy["plugin-opts"].mode}`;
       if (proxy["plugin-opts"].host !== undefined) {
-        outbound.plugin_opts += `;host=${proxy["plugin-opts"].host!}`;
+        outbound.plugin_opts += `;host=${proxy["plugin-opts"].host}`;
       }
       if (proxy.plugin === "v2ray-plugin") {
-        if (
-          proxy["plugin-opts"].tls !== undefined &&
-          proxy["plugin-opts"].tls! === true
-        ) {
+        if (proxy["plugin-opts"].tls === true) {
           outbound.plugin_opts += `;tls`;
         }
 
         if (proxy["plugin-opts"].path !== undefined) {
-          outbound.plugin_opts += `;path=${proxy["plugin-opts"].path!}`;
+          outbound.plugin_opts += `;path=${proxy["plugin-opts"].path}`;
         }
         if (proxy["plugin-opts"].mux !== undefined) {
-          outbound.plugin_opts += `;mux=${proxy["plugin-opts"].mux!}`;
+          outbound.plugin_opts += `;mux=${proxy["plugin-opts"].mux}`;
         }
       }
     }
   }
-  if (
-    proxy["udp-over-tcp"] !== undefined && proxy["udp-over-tcp"]! === true
-  ) {
+  if (proxy["udp-over-tcp"] === true) {
     outbound.udp_over_tcp = { enabled: true };
     if (proxy["udp-over-tcp-version"] !== undefined) {
       outbound.udp_over_tcp.version = proxy["udp-over-tcp-version"];
@@ -471,12 +462,12 @@ const doConvertSocks5ToSocks = convertSocks5ToSocks.implement((proxy) => {
   };
 
   if (proxy.username !== undefined) {
-    outbound.username = proxy.username!;
+    outbound.username = proxy.username;
     if (proxy.password !== undefined) {
-      outbound.password = proxy.password!;
+      outbound.password = proxy.password;
     }
   }
-  if (proxy.tls !== undefined && proxy.tls === true) {
+  if (proxy.tls === true) {
     throw new Error("Unsupported layer tls");
   }
 
@@ -511,7 +502,7 @@ const doConvertTUIC = convertTUIC.implement((proxy) => {
     server: proxy.server,
     server_port: proxy.port,
     uuid: proxy.uuid,
-    tls: doConvertTLSTransport(proxy)!,
+    tls: doConvertTLSTransport(proxy),
   };
 
   if (proxy.password !== undefined) {
@@ -521,7 +512,7 @@ const doConvertTUIC = convertTUIC.implement((proxy) => {
     outbound.heartbeat = (proxy["heartbeat-interval"] / 1000).toString() +
       "s";
   }
-  if (proxy["reduce-rtt"] !== undefined && proxy["reduce-rtt"] == true) {
+  if (proxy["reduce-rtt"] == true) {
     outbound.zero_rtt_handshake = true;
   }
   if (proxy["udp-relay-mode"] !== undefined) {
@@ -530,9 +521,7 @@ const doConvertTUIC = convertTUIC.implement((proxy) => {
   if (proxy["congestion-controller"] !== undefined) {
     outbound.congestion_control = proxy["congestion-controller"];
   }
-  if (
-    proxy["udp-over-stream"] !== undefined && proxy["udp-over-stream"] == true
-  ) {
+  if (proxy["udp-over-stream"] == true) {
     outbound.udp_over_stream = true;
   }
 
