@@ -24,7 +24,8 @@
 |---|---|---|
 |TCP-only|O||
 |IP Version|?|Only option `ip-version` is implemented|
-|TLS Certificate Pinning|?|Implemented via propertiary option `x-clash2singbox-certificate`|
+|TLS Certificate Pinning|?|Implemented via proprietary option `x-clash2singbox-certificate`|
+|TLS Certificate Public Key Pinning|?|Implemented via proprietary option `x-clash2singbox-certificate-public-key-sha256`|
 
 ## Usage
 

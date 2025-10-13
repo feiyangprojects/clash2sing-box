@@ -22,6 +22,7 @@ export const ClashProxyBaseTLS = ClashProxy.extend({
   }),
   sni: z.optional(z.string()),
   "x-clash2singbox-certificate": z.optional(z.array(z.string())),
+  "x-clash2singbox-certificate-public-key-sha256": z.optional(z.array(z.string())),
 });
 export const ClashProxyBaseVmessOrVLESS = ClashProxyBaseTLS.extend({
   uuid: z.string(),
@@ -188,6 +189,7 @@ export const SingboxOutboundCommonTlsTransport = z.object({
   insecure: z.optional(z.boolean()),
   alpn: z.optional(z.array(z.string())),
   certificate: z.optional(z.array(z.string())),
+  client_certificate_public_key_sha256: z.optional(z.array(z.string())),
 });
 export const SingboxOutboundCommonVmessOrVLESSTransportGrpc = z.object({
   type: z.literal("grpc"),
