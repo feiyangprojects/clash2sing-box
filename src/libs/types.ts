@@ -189,7 +189,7 @@ export const SingboxOutboundCommonTlsTransport = z.object({
   insecure: z.optional(z.boolean()),
   alpn: z.optional(z.array(z.string())),
   certificate: z.optional(z.array(z.string())),
-  client_certificate_public_key_sha256: z.optional(z.string()),
+  certificate_public_key_sha256: z.optional(z.string()),
 });
 export const SingboxOutboundCommonVmessOrVLESSTransportGrpc = z.object({
   type: z.literal("grpc"),

@@ -232,7 +232,7 @@ const doConvertTLSTransport = convertTLSTransport.implement(
       tls.certificate = proxy["x-clash2singbox-certificate"];
     }
     if (proxy["x-clash2singbox-certificate-public-key-sha256"] !== undefined) {
-      tls.client_certificate_public_key_sha256 = proxy["x-clash2singbox-certificate-public-key-sha256"];
+      tls.certificate_public_key_sha256 = proxy["x-clash2singbox-certificate-public-key-sha256"];
     }
 
     return tls;
