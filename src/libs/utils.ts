@@ -40,6 +40,8 @@ export type Options = {
       enabled?: boolean;
       path?: string;
       cacheid?: string;
+      storefakeip?: boolean;
+      storerdrc?: boolean;
     };
     clashapi?: {
       externalcontroller?: string;
@@ -84,6 +86,12 @@ export function convert(
     if (options.experimental.cachefile.cacheid !== undefined) {
       singboxExperimental.cache_file.cache_id =
         options.experimental.cachefile.cacheid;
+    }
+    if (options.experimental.cachefile.storefakeip === true) {
+      singboxExperimental.cache_file.store_fakeip = true;
+    }
+    if (options.experimental.cachefile.storerdrc === true) {
+      singboxExperimental.cache_file.store_rdrc = true;
     }
   }
   if (options.experimental?.clashapi !== undefined) {
@@ -232,7 +240,8 @@ const doConvertTLSTransport = convertTLSTransport.implement(
       tls.certificate = proxy["x-clash2singbox-certificate"];
     }
     if (proxy["x-clash2singbox-certificate-public-key-sha256"] !== undefined) {
-      tls.certificate_public_key_sha256 = proxy["x-clash2singbox-certificate-public-key-sha256"];
+      tls.certificate_public_key_sha256 =
+        proxy["x-clash2singbox-certificate-public-key-sha256"];
     }
 
     return tls;
@@ -277,7 +286,8 @@ const doConvertVmessOrVLESSTransport = convertVmessOrVLESSTransport.implement(
       return transport;
     } else if (
       proxy["ws-opts"] !== undefined &&
-      proxy["ws-opts"]["v2ray-http-upgrade"] === true) {
+      proxy["ws-opts"]["v2ray-http-upgrade"] === true
+    ) {
       const transport: SingboxOutboundCommonVmessOrVLESSTransport = {
         "type": "httpupgrade",
       };
@@ -336,8 +346,9 @@ const doConvertAnyTls = convertAnyTls.implement((proxy) => {
   };
 
   if (proxy["idle-session-check-interval"] !== undefined) {
-    outbound.idle_session_check_interval =
-      `${proxy["idle-session-check-interval"]}s`;
+    outbound.idle_session_check_interval = `${
+      proxy["idle-session-check-interval"]
+    }s`;
   }
   if (proxy["idle-session-timeout"] !== undefined) {
     outbound.idle_session_timeout = `${proxy["idle-session-timeout"]}s`;

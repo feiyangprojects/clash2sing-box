@@ -168,6 +168,8 @@ export const SingboxExperimental = z.object({
     enabled: z.optional(z.boolean()),
     path: z.optional(z.string()),
     cache_id: z.optional(z.string()),
+    store_fakeip: z.optional(z.boolean()),
+    store_rdrc: z.optional(z.boolean()),
   })),
   clash_api: z.optional(z.object({
     external_controller: z.optional(z.string()),

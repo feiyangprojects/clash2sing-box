@@ -16,6 +16,16 @@ await new Command()
     { depends: ["experimental.cachefile.path"] },
   )
   .option(
+    "--experimental.cachefile.storefakeip <boolean:boolean>",
+    "Store fakeip in the cache file",
+    { depends: ["experimental.cachefile.path"] },
+  )
+  .option(
+    "--experimental.cachefile.storerdrc <boolean:boolean>",
+    "Store rejected DNS response cache in the cache file",
+    { depends: ["experimental.cachefile.path"] },
+  )
+  .option(
     "--experimental.cachefile.cacheid <string:string>",
     "Identifier for the configuration",
     { depends: ["experimental.cachefile.path"] },
