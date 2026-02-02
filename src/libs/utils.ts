@@ -84,10 +84,10 @@ export function convert(
       singboxExperimental.cache_file.cache_id =
         options.experimental.cachefile.cacheid;
     }
-    if (options.experimental.cachefile.storefakeip === true) {
+    if (options.experimental.cachefile.storefakeip) {
       singboxExperimental.cache_file.store_fakeip = true;
     }
-    if (options.experimental.cachefile.storerdrc === true) {
+    if (options.experimental.cachefile.storerdrc) {
       singboxExperimental.cache_file.store_rdrc = true;
     }
   }
@@ -198,7 +198,7 @@ export function convert(
         const filter = new RegExp(options.outbound.selector.filter[i]);
 
         for (const outbound of singboxOutboundSelectorOutbounds) {
-          if (filter.test(outbound) === true) {
+          if (filter.test(outbound)) {
             selector.outbounds.push(outbound);
           }
         }
@@ -245,7 +245,7 @@ const doConvertTLSTransport = convertTLSTransport.implement(
     if (proxy.sni !== undefined) {
       tls.server_name = proxy.sni;
     }
-    if (proxy["skip-cert-verify"] === true) {
+    if (proxy["skip-cert-verify"]) {
       tls.insecure = true;
     }
     if (proxy["x-clash2singbox-certificate"] !== undefined) {
@@ -298,7 +298,7 @@ const doConvertVmessOrVLESSTransport = convertVmessOrVLESSTransport.implement(
       return transport;
     } else if (
       proxy["ws-opts"] !== undefined &&
-      proxy["ws-opts"]["v2ray-http-upgrade"] === true
+      proxy["ws-opts"]["v2ray-http-upgrade"]
     ) {
       const transport: SingboxOutboundCommonVmessOrVLESSTransport = {
         "type": "httpupgrade",
@@ -452,7 +452,7 @@ const doConvertShadowsocks = convertShadowsocks.implement((proxy) => {
         outbound.plugin_opts += `;host=${proxy["plugin-opts"].host}`;
       }
       if (proxy.plugin === "v2ray-plugin") {
-        if (proxy["plugin-opts"].tls === true) {
+        if (proxy["plugin-opts"].tls) {
           outbound.plugin_opts += `;tls`;
         }
 
@@ -465,7 +465,7 @@ const doConvertShadowsocks = convertShadowsocks.implement((proxy) => {
       }
     }
   }
-  if (proxy["udp-over-tcp"] === true) {
+  if (proxy["udp-over-tcp"]) {
     outbound.udp_over_tcp = { enabled: true };
     if (proxy["udp-over-tcp-version"] !== undefined) {
       outbound.udp_over_tcp.version = proxy["udp-over-tcp-version"];
@@ -493,7 +493,7 @@ const doConvertSocks5ToSocks = convertSocks5ToSocks.implement((proxy) => {
       outbound.password = proxy.password;
     }
   }
-  if (proxy.tls === true) {
+  if (proxy.tls) {
     throw new Error("Unsupported layer tls");
   }
 
