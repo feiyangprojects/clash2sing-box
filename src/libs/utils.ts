@@ -214,19 +214,17 @@ export function convert(
         }
       }
 
-      singbox.outbounds.push(selector)
+      singbox.outbounds.push(selector);
     }
   }
 
-  if (options.mergeable !== undefined) {
-    return JSON.stringify(
-      merge(options.mergeable.value, singbox),
+  return JSON.stringify(
+    options.mergeable !== undefined
+      ? merge(options.mergeable.value, singbox)
+      : singbox,
       null,
-      2,
-    );
-  } else {
-    return JSON.stringify(singbox, null, 2);
-  }
+      2
+  );
 }
 
 const convertTLSTransport = z.function({
