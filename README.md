@@ -29,28 +29,30 @@
 
 ## Usage
 
-```shell
-$ deno run jsr:@fei1yang/clash2sing-box convert --help
-Usage: clash2sing-box convert <input> <output>
+> Merge subcommand
 
-Description:
+`deno run jsr:@fei1yang/clash2sing-box merge INPUT...`
 
-  Convert configuration
+> Convert subcommand
 
-Options:
+`deno run jsr:@fei1yang/clash2sing-box convert [OPTION]... INPUT OUTPUT`
 
-  -h, --help                                                - Show this help.                                                                                                     
-  --experimental.cachefile.enabled               <boolean>  - Enable cache file feature                                                                                           
-  --experimental.cachefile.path                  <path>     - Path to the cache file                                         (Depends: --experimental.cachefile.path)             
-  --experimental.cachefile.cacheid               <string>   - Identifier for the configuration                               (Depends: --experimental.cachefile.path)             
-  --experimental.clashapi.externalcontroller     <address>  - Clash API listening address                                                                                         
-  --experimental.clashapi.externalui             <path>     - Path to a directory in which the external UI is stored         (Depends: --experimental.clashapi.externalcontroller)
-  --experimental.clashapi.externaluidownloadurl  <url>      - URL to a ZIP to download the external UI                       (Depends: --experimental.clashapi.externalcontroller)
-  --experimental.clashapi.secret                 <string>   - A Bearer token for API Authorization                           (Depends: --experimental.clashapi.externalcontroller)
-  --outbound.selector.default                    <integer>  - Use the n-th outbound as the default in the selector outbound                                                       
-  --outbound.selector.tag                        <string>   - The name(s) of the selector outbound(s)                                                                             
-  --mergeable                                    <path>     - External configuration to merge after the conversion     
-```
+|Option|Type|Description|
+|---|---|---|
+|--experimental.cachefile.enabled|boolean|Enable cache file feature|
+|--experimental.cachefile.path|path|Path to the cache file. depends on: --experimental.cachefile.path|
+|--experimental.cachefile.storefakeip|boolean|Store fakeip in the cache file. depends on: --experimental.cachefile.path|
+|--experimental.cachefile.storerdrc|boolean|Store rejected DNS response cache in the cache file. depends on: --experimental.cachefile.path|
+|--experimental.cachefile.cacheid|string|Identifier for the configuration. depends on: --experimental.cachefile.path|
+|--experimental.clashapi.externalcontroller|address|Clash API listening address|
+|--experimental.clashapi.externalui|path|Path to a directory in which the external UI is stored. depends on: --experimental.clashapi.externalcontroller|
+|--experimental.clashapi.externaluidownloadurl|url|URL to a ZIP to download the external UI. depends on: --experimental.clashapi.externalcontroller|
+|--experimental.clashapi.secret|string|A Bearer token for API Authorization. depends on: --experimental.clashapi.externalcontroller|
+|--outbound.domainresolver.tag|string|The name of the domain resolver, required for setting resolver strategy|
+|--outbound.selector.default|string|Use the n-th outbound as the default in the selector outbound|
+|--outbound.selector.filter|string|The RegExp filter(s) of the selector outbound(s). depends on: --outbound.selector.tag|
+|--outbound.selector.tag|string|The name(s) of the selector outbound(s)|
+|--mergeable|path|External configuration to merge after the conversion|
 
 ### Install Deno
 
@@ -59,16 +61,13 @@ Options:
 
 ### Convert Configuration
 
+In this example, we grant file read and write permissions to this program, convert `./src/tests/clash.yaml` to `./src/tests/sing-box.json` and merged `./src/tests/sing-box-mergeable.json` into it.
+
 ```shell
-           # Grant read permission to input (and mergeable) configuration
 $ deno run --allow-read=./src/tests/clash.yaml,./src/tests/sing-box-mergeable.json \
-           # Grant write permission to output configuration
            --allow-write=./src/tests/sing-box.json \
-           # Point to software entry and preform conversion
            jsr:@fei1yang/clash2sing-box convert \
-           # Mergeable injection is optional
            --mergeable ./src/tests/sing-box-mergeable.json \
-           # Set input and output configuration file
            ./src/tests/clash.yaml ./src/tests/sing-box.json
 $ ls ./src/tests/
 clash.yaml  sing-box.json  sing-box-mergeable.json
