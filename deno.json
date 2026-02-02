@@ -1,6 +1,6 @@
 {
   "name": "@fei1yang/clash2sing-box",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "exports": {
     ".": "./src/mod.ts",
     "./types": "./src/libs/types.ts",

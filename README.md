@@ -49,7 +49,7 @@
 |--experimental.clashapi.externaluidownloadurl|url|URL to a ZIP to download the external UI. depends on: --experimental.clashapi.externalcontroller|
 |--experimental.clashapi.secret|string|A Bearer token for API Authorization. depends on: --experimental.clashapi.externalcontroller|
 |--outbound.domainresolver.tag|string|The name of the domain resolver, required for setting resolver strategy|
-|--outbound.selector.default|string|Use the n-th outbound as the default in the selector outbound|
+|--outbound.selector.default|string|Use the n-th outbound as the default in the selector outbound(s)|
 |--outbound.selector.filter|string|The RegExp filter(s) of the selector outbound(s). depends on: --outbound.selector.tag|
 |--outbound.selector.tag|string|The name(s) of the selector outbound(s)|
 |--mergeable|path|External configuration to merge after the conversion|

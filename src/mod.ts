@@ -54,8 +54,8 @@ await new Command()
     "The name of the domain resolver, required for setting resolver strategy",
   )
   .option(
-    "--outbound.selector.default <string:string>",
-    "Use the n-th outbound as the default in the selector outbound",
+    "--outbound.selector.default <string:string[]>",
+    "Use the n-th outbound as the default in the selector outbound(s)",
   )
   .option(
     "--outbound.selector.filter <string:string[]>",

@@ -55,7 +55,7 @@ export type Options = {
       tag?: string;
     };
     selector?: {
-      default?: string;
+      default?: string[];
       filter?: string[];
       tag?: string[];
     };
@@ -206,9 +206,13 @@ export function convert(
         selector.outbounds = singboxOutboundSelectorOutbounds;
       }
 
-      if (options.outbound?.selector?.default != undefined) {
-        if (selector.outbounds.includes(options.outbound.selector.default)) {
-          selector.default = options.outbound.selector.default;
+      if (
+        options.outbound?.selector?.default?.length !== undefined &&
+        options.outbound.selector.default.length >= i + 1 &&
+        options.outbound.selector.default[i].length > 0
+      ) {
+        if (selector.outbounds.includes(options.outbound.selector.default[i])) {
+          selector.default = options.outbound.selector.default[i];
         } else {
           throw new Error("Invalid default outbound name");
         }
@@ -222,8 +226,8 @@ export function convert(
     options.mergeable !== undefined
       ? merge(options.mergeable.value, singbox)
       : singbox,
-      null,
-      2
+    null,
+    2,
   );
 }
 
