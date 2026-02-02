@@ -55,7 +55,8 @@ export type Options = {
       tag?: string;
     };
     selector?: {
-      default?: number;
+      default?: string;
+      filter?: string[];
       tag?: string[];
     };
   };
@@ -72,11 +73,7 @@ export function convert(
   });
 
   const singboxExperimental: SingboxExperimental = {};
-  const singboxOutboundSelector: SingboxOutboundSelector = {
-    type: "selector",
-    tag: "selector",
-    outbounds: [],
-  };
+  const singboxOutboundSelectorOutbounds: string[] = [];
   if (options.experimental?.cachefile !== undefined) {
     singboxExperimental.cache_file = { enabled: true };
 
@@ -182,28 +179,43 @@ export function convert(
     }
 
     singbox.outbounds.push(outbound);
-    singboxOutboundSelector.outbounds.push(outbound.tag);
-  }
-
-  if (options.outbound?.selector?.default != undefined) {
-    const outbound = singbox.outbounds.at(options.outbound.selector.default);
-    if (outbound != undefined) {
-      singboxOutboundSelector.default = outbound.tag;
-    } else {
-      throw new Error("Invalid outbound ordinal number");
-    }
+    singboxOutboundSelectorOutbounds.push(outbound.tag);
   }
 
   if (options.outbound?.selector?.tag !== undefined) {
-    for (const tag of options.outbound.selector.tag) {
-      const selector = structuredClone(singboxOutboundSelector);
-      selector.tag = tag;
-      singbox.outbounds.push(SingboxOutboundSelector.parse(selector));
+    for (let i = 0; i < options.outbound?.selector?.tag?.length; i++) {
+      const selector: SingboxOutboundSelector = {
+        type: "selector",
+        tag: options.outbound.selector.tag[i],
+        outbounds: [],
+      };
+
+      if (
+        options.outbound?.selector?.filter?.length !== undefined &&
+        options.outbound.selector.filter.length >= i + 1 &&
+        options.outbound.selector.filter[i].length > 0
+      ) {
+        const filter = new RegExp(options.outbound.selector.filter[i]);
+
+        for (const outbound of singboxOutboundSelectorOutbounds) {
+          if (filter.test(outbound) === true) {
+            selector.outbounds.push(outbound);
+          }
+        }
+      } else {
+        selector.outbounds = singboxOutboundSelectorOutbounds;
+      }
+
+      if (options.outbound?.selector?.default != undefined) {
+        if (selector.outbounds.includes(options.outbound.selector.default)) {
+          selector.default = options.outbound.selector.default;
+        } else {
+          throw new Error("Invalid default outbound name");
+        }
+      }
+
+      singbox.outbounds.push(selector)
     }
-  } else {
-    singbox.outbounds.push(
-      SingboxOutboundSelector.parse(singboxOutboundSelector),
-    );
   }
 
   if (options.mergeable !== undefined) {

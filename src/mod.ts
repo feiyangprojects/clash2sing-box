@@ -54,8 +54,13 @@ await new Command()
     "The name of the domain resolver, required for setting resolver strategy",
   )
   .option(
-    "--outbound.selector.default <integer:integer>",
+    "--outbound.selector.default <string:string>",
     "Use the n-th outbound as the default in the selector outbound",
+  )
+  .option(
+    "--outbound.selector.filter <string:string[]>",
+    "The RegExp filter(s) of the selector outbound(s)",
+    { depends: ["outbound.selector.tag"] },
   )
   .option(
     "--outbound.selector.tag <string:string[]>",

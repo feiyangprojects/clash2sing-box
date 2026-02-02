@@ -28,9 +28,11 @@
         "--outbound.domainresolver.tag",
         "bootstrap",
         "--outbound.selector.default",
-        "0",
+        "tuic",
+        "--outbound.selector.filter",
+        ",tuic",
         "--outbound.selector.tag",
-        "selector-a,selector-z",
+        "selector-a,selector-t",
         "--mergeable",
         "./src/tests/sing-box-mergeable.json",
 
