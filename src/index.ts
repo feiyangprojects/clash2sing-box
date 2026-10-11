@@ -1,3 +1,4 @@
+import * as fs from "node:fs";
 import { Command, ValidationError } from "@cliffy/command";
 
 import { convert, merge } from "./libs/utils.ts";
@@ -69,24 +70,24 @@ await new Command()
   .option(
     "--mergeable <path:string>",
     "External configuration to merge after the conversion",
-    (value: string): { value: object } => {
+    (value: string): { value: object; } => {
       try {
-        return { value: JSON.parse(Deno.readTextFileSync(value)) };
+        return { value: JSON.parse(fs.readFileSync(value, "utf-8")) };
       } catch (_) {
         throw new ValidationError("Invalid mergeable file");
       }
     },
   )
   .action((options, input, output) => {
-    Deno.writeTextFileSync(
+    fs.writeFileSync(
       output,
-      convert(Deno.readTextFileSync(input), options),
+      convert(fs.readFileSync(input, "utf-8"), options),
     );
   })
   .command("merge <input...:string>", "Merge multiple JSON files")
   .action((_, ...input) => {
     console.log(
-      merge(...input.map((i) => JSON.parse(Deno.readTextFileSync(i)))),
+      merge(...input.map((i) => JSON.parse(fs.readFileSync(i, "utf-8")))),
     );
   })
-  .parse(Deno.args);
+  .parse();
