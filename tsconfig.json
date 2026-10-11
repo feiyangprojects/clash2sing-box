@@ -1,0 +1,27 @@
+{
+    "compilerOptions": {
+        "rootDir": "src",
+        "outDir": "dist",
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
+        "target": "ES2024",
+        "jsx": "react-jsx",
+        "allowImportingTsExtensions": true,
+        "checkJs": false,
+        "declaration": true,
+        "experimentalDecorators": false,
+        "rewriteRelativeImportExtensions": true,
+        "strictNullChecks": true,
+        "strictFunctionTypes": true,
+        "strict": true,
+        "sourceMap": true,
+        "types": [
+            "node"
+        ]
+    },
+    "exclude": [
+        "dist",
+        "node_modules",
+        "**/node_modules/*"
+    ]
+}

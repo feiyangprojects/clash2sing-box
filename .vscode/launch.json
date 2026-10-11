@@ -5,10 +5,9 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "request": "launch",
       "name": "Launch Program",
-      "type": "node",
-      "program": "${workspaceFolder}/src/mod.ts",
+      "program": "${workspaceFolder}/src/index.ts",
+      "cwd": "${workspaceFolder}",
       "args": [
         "convert",
         "./src/tests/clash.yaml",
@@ -30,23 +29,23 @@
         "--outbound.selector.default",
         "tuic",
         "--outbound.selector.filter",
-        ",tuic",
+        "tuic",
         "--outbound.selector.tag",
         "selector-a,selector-t",
         "--mergeable",
         "./src/tests/sing-box-mergeable.json",
-
       ],
-      "cwd": "${workspaceFolder}",
-      "runtimeExecutable": "deno",
       "runtimeArgs": [
-        "run",
-        "--inspect-wait",
-        "--allow-env=LOG_TOKENS,LOG_STREAM",
-        "--allow-read=./src/tests/clash.yaml,./src/tests/sing-box-mergeable.json",
-        "--allow-write=./src/tests/sing-box.json"
+        "--permission",
+        "--allow-fs-read=./node_modules/",
+        "--allow-fs-read=./src/",
+        "--allow-fs-write=./src/tests/sing-box.json"
       ],
-      "attachSimplePort": 9229
+      "request": "launch",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "type": "node"
     }
   ]
 }
