@@ -9,6 +9,7 @@ import {
   ClashProxyHttp,
   ClashProxyHysteria,
   ClashProxyShadowsocks,
+  ClashProxySnell,
   ClashProxySocks5,
   ClashProxyTrojan,
   ClashProxyTUIC,
@@ -24,6 +25,7 @@ import {
   type SingboxOutbounds,
   SingboxOutboundSelector,
   SingboxOutboundShadowsocks,
+  SingboxOutboundSnell,
   SingboxOutboundSocks,
   SingboxOutboundTrojan,
   SingboxOutboundTUIC,
@@ -133,6 +135,9 @@ export function convert(
         break;
       case "socks5":
         outbound = doConvertSocks5ToSocks(proxy);
+        break;
+      case "snell":
+        outbound = doConvertSnell(proxy);
         break;
       case "trojan":
         outbound = doConvertTrojan(proxy);
@@ -360,9 +365,8 @@ const doConvertAnyTls = convertAnyTls.implement((proxy) => {
   };
 
   if (proxy["idle-session-check-interval"] !== undefined) {
-    outbound.idle_session_check_interval = `${
-      proxy["idle-session-check-interval"]
-    }s`;
+    outbound.idle_session_check_interval = `${proxy["idle-session-check-interval"]
+      }s`;
   }
   if (proxy["idle-session-timeout"] !== undefined) {
     outbound.idle_session_timeout = `${proxy["idle-session-timeout"]}s`;
@@ -497,6 +501,35 @@ const doConvertSocks5ToSocks = convertSocks5ToSocks.implement((proxy) => {
   }
   if (proxy.tls) {
     throw new Error("Unsupported layer tls");
+  }
+
+  return outbound;
+});
+
+const convertSnell = z.function({
+  input: [ClashProxySnell],
+  output: SingboxOutboundSnell
+});
+const doConvertSnell = convertSnell.implement((proxy) => {
+  const outbound: SingboxOutboundSnell = {
+    type: "snell",
+    tag: proxy.name,
+    server: proxy.server,
+    server_port: proxy.port,
+    version: proxy.version < 6 ? 4 : 6,
+    psk: proxy.psk,
+  };
+
+  if (proxy.reuse !== undefined) {
+    outbound.reuse = proxy.reuse;
+  }
+  if (proxy["obfs-opts"]?.mode !== undefined) {
+    if (proxy["obfs-opts"].mode === "http") {
+      outbound.obfs_mode = "http";
+      if (proxy["obfs-opts"].host !== undefined) {
+        outbound.obfs_host = proxy["obfs-opts"].host;
+      }
+    }
   }
 
   return outbound;
