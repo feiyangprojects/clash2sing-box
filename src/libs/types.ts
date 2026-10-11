@@ -73,6 +73,16 @@ export const ClashProxySocks5 = ClashProxyBaseTLS.extend({
   username: z.optional(z.string()),
   password: z.optional(z.string()),
 });
+export const ClashProxySnell = ClashProxy.extend({
+  type: z.literal("snell"),
+  psk: z.string(),
+  version: z.literal([4, 5, 6]),
+  reuse: z.optional(z.boolean()),
+  "obfs-opts": z.optional(z.object({
+    mode: z.enum(["http"]),
+    host: z.optional(z.string())
+  })),
+});
 export const ClashProxyShadowsocks = ClashProxy.extend({
   type: z.literal("ss"),
   cipher: z.enum([
@@ -137,6 +147,7 @@ export const ClashProxies = z.discriminatedUnion("type", [
   ClashProxyHysteria,
   ClashProxyShadowsocks,
   ClashProxySocks5,
+  ClashProxySnell,
   ClashProxyTrojan,
   ClashProxyTUIC,
   ClashProxyVmess,
@@ -156,6 +167,7 @@ export type ClashProxyHttp = z.infer<typeof ClashProxyHttp>;
 export type ClashProxyHysteria = z.infer<typeof ClashProxyHysteria>;
 export type ClashProxyShadowsocks = z.infer<typeof ClashProxyShadowsocks>;
 export type ClashProxySocks5 = z.infer<typeof ClashProxySocks5>;
+export type ClashProxySnell = z.infer<typeof ClashProxySnell>;
 export type ClashProxyTrojan = z.infer<typeof ClashProxyTrojan>;
 export type ClashProxyTUIC = z.infer<typeof ClashProxyTUIC>;
 export type ClashProxyVmess = z.infer<typeof ClashProxyVmess>;
@@ -293,6 +305,14 @@ export const SingboxOutboundShadowsocks = SingboxOutbound.extend({
     version: z.optional(z.union([z.literal(1), z.literal(2)])),
   })),
 });
+export const SingboxOutboundSnell = SingboxOutbound.extend({
+  type: z.literal("snell"),
+  version: z.literal([4, 6]),
+  psk: z.string(),
+  reuse: z.optional(z.boolean()),
+  obfs_mode: z.optional(z.enum(["http"])),
+  obfs_host: z.optional(z.string()),
+});
 export const SingboxOutboundSocks = SingboxOutbound.extend({
   type: z.literal("socks"),
   username: z.optional(z.string()),
@@ -334,6 +354,7 @@ export const SingboxOutbounds = z.discriminatedUnion("type", [
   SingboxOutboundHysteria,
   SingboxOutboundShadowsocks,
   SingboxOutboundSocks,
+  SingboxOutboundSnell,
   SingboxOutboundTrojan,
   SingboxOutboundTUIC,
   SingboxOutboundVmess,
@@ -378,6 +399,7 @@ export type SingboxOutboundShadowsocks = z.infer<
   typeof SingboxOutboundShadowsocks
 >;
 export type SingboxOutboundSocks = z.infer<typeof SingboxOutboundSocks>;
+export type SingboxOutboundSnell = z.infer<typeof SingboxOutboundSnell>;
 export type SingboxOutboundTrojan = z.infer<typeof SingboxOutboundTrojan>;
 export type SingboxOutboundTUIC = z.infer<typeof SingboxOutboundTUIC>;
 export type SingboxOutboundVmess = z.infer<typeof SingboxOutboundVmess>;
